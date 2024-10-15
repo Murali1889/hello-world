@@ -29,7 +29,7 @@ function LinkedInPosts() {
             {(linkedInPosts || []).map((post, index) => (
               <li key={index} className="flex items-center">
                 <ChevronRight className="mr-2 h-4 w-4 text-indigo-500 dark:text-indigo-400" />
-                <a href="#" className="hover:underline text-gray-700 dark:text-gray-300">{post}</a>
+                <a href="/" className="hover:underline text-gray-700 dark:text-gray-300">{post}</a>
               </li>
             ))}
           </ul>

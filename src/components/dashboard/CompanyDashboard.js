@@ -1,20 +1,13 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Card } from "../ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
-import { Button } from "../ui/button";
-import { RefreshCw, BarChart2, Users, Rss } from 'lucide-react';
+import { BarChart2, Users, Rss } from 'lucide-react';
 import ProfileTab from './ProfileTab';
 import PortfolioTab from './PortfolioTab';
 import PulseTab from './PulseTab';
 
 export default function CompanyDashboard() {
   const [activeTab, setActiveTab] = useState("profile");
-
-  const refreshTab = (tab) => {
-    console.log(`Refreshing ${tab} tab`);
-    setActiveTab(prevTab => prevTab === tab ? tab + '_refresh' : tab);
-  };
 
   const fadeIn = {
     initial: { opacity: 0, y: 20 },
@@ -45,15 +38,6 @@ export default function CompanyDashboard() {
                 Company Pulse
               </TabsTrigger>
             </TabsList>
-            {/* <Button
-              variant="outline"
-              size="icon"
-              onClick={() => refreshTab(activeTab)}
-              aria-label={`Refresh ${activeTab}`}
-              className="rounded-full bg-white/50 hover:bg-white/80 text-indigo-600 dark:bg-gray-800/50 dark:hover:bg-gray-700/80 dark:text-indigo-300 shadow-md hover:shadow-lg transition-all"
-            >
-              <RefreshCw className="h-4 w-4" />
-            </Button> */}
           </div>
           <div className="h-full overflow-y-auto pb-[50px]"> {/* Ensure scrollable content area */}
             <AnimatePresence mode="wait">

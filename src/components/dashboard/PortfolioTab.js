@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, {useState} from 'react';
 import { Card, CardContent } from "../ui/card";
 import { Button } from "../ui/button";
 import { Loader } from 'lucide-react';
@@ -12,27 +12,8 @@ import {
 } from "../ui/alert-dialog";
 import { ScrollArea } from "../ui/scroll-area";
 
-export default function PortfolioTab() {
-  const [productsData, setProductsData] = useState(null);
-  const [loading, setLoading] = useState(true);
+export default function PortfolioTab({ productsData, loading, error }) {
   const [openDialog, setOpenDialog] = useState(null);
-
-  useEffect(() => {
-    fetchProductsData();
-  }, []);
-
-  const fetchProductsData = async () => {
-    try {
-      const response = await fetch('https://script.google.com/macros/s/AKfycbyMF96kj0reKSACaCcUsMNk4bnkFoHfywPzlq0RZGT4v6mulbpuF3-Qbwyqorx91Jej/exec?company_name=Signzy&products=true');
-      const data = await response.json()
-      console.log(data)
-      setProductsData(data.data);
-      setLoading(false);
-    } catch (error) {
-      console.error('Error fetching products data:', error);
-      setLoading(false);
-    }
-  };
 
   if (loading) {
     return (
@@ -40,6 +21,10 @@ export default function PortfolioTab() {
         <Loader className="animate-spin" size={48} />
       </div>
     );
+  }
+
+  if (error) {
+    return <div className="text-center py-8 text-red-500">{error}</div>;
   }
 
   if (!productsData || productsData.length === 0) {

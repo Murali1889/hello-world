@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, {useState} from 'react';
 import { Card, CardContent } from "./ui/card";
 import { ScrollArea } from "./ui/scroll-area";
 import { ChevronRight, ChevronDown, Loader } from 'lucide-react'; // Importing Loader from lucide-react
@@ -9,26 +9,8 @@ const formatDate = (dateString) => {
   return new Date(dateString).toLocaleDateString(undefined, options);
 };
 
-function BlogPosts() {
-  const [blogPosts, setBlogPosts] = useState(null);
+function BlogPosts({ blogPostsData, loading }) {
   const [expandedPost, setExpandedPost] = useState(null); // Track which post is expanded
-  const [loading, setLoading] = useState(true); // Track loading state
-
-  useEffect(() => {
-    fetchBlogPosts();
-  }, []);
-
-  const fetchBlogPosts = async () => {
-    try {
-      const response = await fetch('https://script.google.com/macros/s/AKfycbyMF96kj0reKSACaCcUsMNk4bnkFoHfywPzlq0RZGT4v6mulbpuF3-Qbwyqorx91Jej/exec?blogs=true&id=ID-1728895494800-306');
-      const data = await response.json();
-      setBlogPosts(data);
-    } catch (error) {
-      console.error('Error fetching blog posts:', error);
-    } finally {
-      setLoading(false); // Stop loading after fetching is complete
-    }
-  };
 
   const formatSummary = (summary) => {
     return summary
@@ -40,7 +22,7 @@ function BlogPosts() {
   return (
     <Card className="bg-indigo-50/50 dark:bg-gray-700/50 shadow-inner backdrop-blur-md rounded-2xl border-0 h-full">
       <CardContent className="p-6 space-y-6 h-full">
-        <h3 className="text-lg font-semibold mb-4 text-indigo-700 dark:text-indigo-300">Latest Blog Posts</h3>
+        <h3 className="text-lg font-semibold mb-4 text-indigo-700 dark:text-indigo-300">Company Blogs</h3>
         {loading ? (
           <div className="flex items-center justify-center h-96"> {/* Fixed height for centering */}
             <Loader className="animate-spin text-gray-500 dark:text-gray-300 h-8 w-8" /> {/* Animated Loader icon */}
@@ -48,7 +30,7 @@ function BlogPosts() {
         ) : (
           <ScrollArea className="h-full pr-4">
             <ul className="space-y-4">
-              {blogPosts?.map((post, index) => (
+              {blogPostsData?.map((post, index) => (
                 <li key={index} className="flex flex-col">
                   <div className="flex justify-between items-center cursor-pointer" onClick={() => setExpandedPost(expandedPost === index ? null : index)}>
                     <div className="flex items-center space-x-2">

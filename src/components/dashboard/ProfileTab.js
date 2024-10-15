@@ -1,39 +1,10 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React from 'react';
 import { Card, CardContent } from "../ui/card";
 import { Avatar, AvatarImage } from "../ui/avatar";
 import { Button } from "../ui/button";
-import axios from 'axios';
 import { Loader } from 'react-feather';
 
-export default function ProfileTab({ refreshTrigger }) {
-    const [companyData, setCompanyData] = useState(null);
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState(null);
-
-    const fetchCompanyData = useCallback(async () => {
-        setLoading(true);
-        setError(null);
-        try {
-            const response = await axios.get('https://script.google.com/macros/s/AKfycbyMF96kj0reKSACaCcUsMNk4bnkFoHfywPzlq0RZGT4v6mulbpuF3-Qbwyqorx91Jej/exec?company_name=Signzy');
-            setCompanyData(response.data.data);
-        } catch (error) {
-            console.error('Error fetching company data:', error);
-            setError('Failed to fetch company data. Please try again.');
-        }
-        setLoading(false);
-    }, []);
-
-    useEffect(() => {
-        if (!companyData) {
-            fetchCompanyData();
-        }
-    }, [fetchCompanyData, companyData]);
-
-    useEffect(() => {
-        if (refreshTrigger) {
-            fetchCompanyData();
-        }
-    }, [refreshTrigger, fetchCompanyData]);
+export default function ProfileTab({ companyData, loading, error }) {
 
     const capitalizeFirstLetter = (string) => {
         return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
@@ -45,7 +16,6 @@ export default function ProfileTab({ refreshTrigger }) {
             return <p>{text}</p>; // Fallback in case the input is not a string
         }
 
-        console.log(text.split("\\n\\n"))
         return text.split('\\n\\n').map((paragraph, index) => (
             <p key={index} className="mb-2">{paragraph.trim()}</p>
         ));
@@ -84,7 +54,7 @@ export default function ProfileTab({ refreshTrigger }) {
 
     return (
         <Card className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-md shadow-xl rounded-2xl border-0 h-full">
-            <CardContent className="p-6 h-full overflow-y-auto"> {/* Ensure scrollable content */}
+            <CardContent className="p-6 h-full overflow-y-auto">
                 <div className='text-[3rem] py-3'>{companyData.company_name}</div>
                 <div className="grid grid-cols-2 gap-4">
                     {/* Company Logo */}
@@ -96,7 +66,7 @@ export default function ProfileTab({ refreshTrigger }) {
                         </CardContent>
                     </Card>
 
-                    {/* Company About beside the logo */}
+                    {/* Company About */}
                     <Card className="bg-indigo-50/50 dark:bg-gray-700/50 shadow-inner rounded-xl border-0 col-span-1">
                         <CardContent className="p-4">
                             <h3 className="text-lg font-semibold mb-2">About</h3>
@@ -106,8 +76,8 @@ export default function ProfileTab({ refreshTrigger }) {
                         </CardContent>
                     </Card>
 
-                    {/* All Clients below the logo */}
-                    <Card className="bg-indigo-50/50 dark:bg-gray-700/50 shadow-inner rounded-xl border-0 col-span-1 h-fit"> {/* Below the logo */}
+                    {/* Clients */}
+                    <Card className="bg-indigo-50/50 dark:bg-gray-700/50 shadow-inner rounded-xl border-0 col-span-1">
                         <CardContent className="p-4">
                             <h3 className="text-lg font-semibold mb-2">All Clients</h3>
                             <div className="grid grid-cols-2 gap-2">
@@ -120,8 +90,8 @@ export default function ProfileTab({ refreshTrigger }) {
                         </CardContent>
                     </Card>
 
-                    {/* What is the Product beside clients and below "Company About" */}
-                    <Card className="bg-indigo-50/50 dark:bg-gray-700/50 shadow-inner rounded-xl border-0 col-span-1"> {/* Below the "Company About" */}
+                    {/* Product Details */}
+                    <Card className="bg-indigo-50/50 dark:bg-gray-700/50 shadow-inner rounded-xl border-0 col-span-1">
                         <CardContent className="p-4">
                             <h3 className="text-lg font-semibold mb-2">What is the Product?</h3>
                             <div className="text-gray-700 dark:text-gray-300">

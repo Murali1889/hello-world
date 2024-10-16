@@ -22,7 +22,7 @@ function BlogPosts({ blogPostsData, loading }) {
   return (
     <Card className="bg-indigo-50/50 dark:bg-gray-700/50 shadow-inner backdrop-blur-md rounded-2xl border-0 h-full">
       <CardContent className="p-6 space-y-6 h-full">
-        <h3 className="text-lg font-semibold mb-4 text-indigo-700 dark:text-indigo-300">Company Blogs</h3>
+        <h3 className="text-lg font-semibold mb-4 text-white">Company Blogs</h3>
         {loading ? (
           <div className="flex items-center justify-center h-96"> {/* Fixed height for centering */}
             <Loader className="animate-spin text-gray-500 dark:text-gray-300 h-8 w-8" /> {/* Animated Loader icon */}

@@ -22,101 +22,85 @@ const formatDate = (dateString) => {
 const CompanyCard = ({ company }) => {
     const navigate = useNavigate();
 
+    console.log(company)
     return (
-        <Card className="bg-white rounded-lg shadow-md hover:shadow-xl transition-all duration-300 transform hover:scale-105">
-            <CardContent className="p-6 flex flex-col justify-between h-full">
-                <div>
-                    <div className="mb-4 aspect-[2/1] relative overflow-hidden rounded-lg bg-gray-100 flex items-center justify-center">
-                        {company.logo ? (
-                            company.logo.type === 'svg' ? (
-                                <div
-                                    className="h-full w-full p-2 svg"
-                                    dangerouslySetInnerHTML={{
-                                        __html: company.logo.content
-                                    }}
-                                />
-                            ) : company.logo.type === 'img' ? (
-                                <img
-                                    src={company.logo.content}
-                                    alt={`${company.name || 'Company'} logo`}
-                                    className="w-full h-full object-scale-down"
-                                    onError={(e) => e.target.parentElement.lastChild.className = 'text-3xl font-bold text-[#000040]'}
-                                />
-                            ) : (
-                                <span className="flex h-full w-full items-center justify-center text-3xl font-bold text-[#000040]">
-                                    {(company.name || 'N/A').charAt(0)}
-                                </span>
-                            )
-                        ) : (
-                            <span className="flex h-full w-full items-center justify-center text-3xl font-bold text-[#000040]">
-                                {(company.name || 'N/A').charAt(0)}
-                            </span>
-                        )}
-                    </div>
-
-                    <h2 className="text-xl font-bold mb-2">
-                        {company.name || 'Company Name Not Available'}
-                    </h2>
-
-                    <p className="text-gray-600 mb-4 line-clamp-2">
-                        {company.about || 'Company description not available'}
-                    </p>
-                </div>
-
-                <div>
-                    <div className="flex justify-between items-center mb-4">
-                        <span className="text-sm text-gray-500">
-                            Last updated: {formatDate(company.last_updated)}
-                        </span>
-
-                        <div className="flex space-x-2">
-                            {company.url && (
-                                <TooltipProvider>
-                                    <Tooltip>
-                                        <TooltipTrigger asChild>
-                                            <a
-                                                href={company.url}
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                                className="text-[#000040] hover:text-black transition-colors duration-300"
-                                            >
-                                                <Globe className="h-5 w-5" />
-                                            </a>
-                                        </TooltipTrigger>
-                                        <TooltipContent>Visit website</TooltipContent>
-                                    </Tooltip>
-                                </TooltipProvider>
-                            )}
-
-                            {company.linkedin_url && (
-                                <TooltipProvider>
-                                    <Tooltip>
-                                        <TooltipTrigger asChild>
-                                            <a
-                                                href={company.linkedin_url}
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                                className="text-[#000040] hover:text-black transition-colors duration-300"
-                                            >
-                                                <Linkedin className="h-5 w-5" />
-                                            </a>
-                                        </TooltipTrigger>
-                                        <TooltipContent>View LinkedIn profile</TooltipContent>
-                                    </Tooltip>
-                                </TooltipProvider>
-                            )}
-                        </div>
-                    </div>
-
-                    <Button
-                        className="w-full bg-[#000040] hover:bg-[#000060] text-white px-4 py-2 rounded-lg transition-all duration-300"
-                        onClick={() => navigate(`/company/${encodeURIComponent(company.company_name)}`)}
-                    >
-                        View Details
-                    </Button>
-                </div>
-            </CardContent>
-        </Card>
+        <Card className="bg-white border border-[#64748B]/10 rounded-lg overflow-hidden transition-all duration-300 hover:shadow-lg hover:shadow-[#06B6D4]/10">
+        <CardContent className="p-6">
+          <div className="aspect-[4/1] relative mb-4 bg-[#F1F5F9] rounded-md overflow-hidden px-5 py-3">
+            {company.logo ? (
+              company.logo.type === 'svg' ? (
+                <div
+                  className="h-full w-full p-4 svg"
+                  dangerouslySetInnerHTML={{
+                    __html: company.logo.content
+                  }}
+                />
+              ) : company.logo.type === 'img' ? (
+                <img
+                  src={company.logo.content}
+                  alt={`${company.name} logo`}
+                  className="object-contain w-full h-full p-4"
+                //   onError={(e) => {
+                //     e.target.style.display = 'none';
+                //     e.target.nextSibling.style.display = 'flex';
+                //   }}
+                />
+              ) : (
+                <span className="flex h-full w-full items-center justify-center text-3xl font-semibold text-[#0F172A]">
+                  {(company.name || 'N/A').charAt(0)}
+                </span>
+              )
+            ) : (
+              <span className="flex h-full w-full items-center justify-center text-3xl font-semibold text-[#0F172A]">
+                {(company.name || 'N/A').charAt(0)}
+              </span>
+            )}
+          </div>
+          <h2 className="text-xl font-semibold mb-2 text-[#0F172A]">
+            {company.name || 'Company Name Not Available'}
+          </h2>
+          <p className="text-[#64748B] text-sm mb-2">{company.industry}</p>
+          <p className="text-[#0F172A] text-sm line-clamp-3">
+            {company.about || 'Company description not available'}
+          </p>
+        </CardContent>
+        <CardFooter className="px-6 pb-6 pt-0 flex flex-col gap-4">
+          <div className="flex w-full items-center justify-between">
+            <span className="text-sm text-[#64748B]">
+              Last updated: {formatDate(company.last_updated)}
+            </span>
+            <div className="flex gap-2">
+              {company.url && (
+                <a
+                  href={company.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-[#64748B] hover:text-[#0F172A] transition-colors duration-300"
+                >
+                  <Globe className="h-5 w-5" />
+                </a>
+              )}
+              {company.linkedin_url && (
+                <a
+                  href={company.linkedin_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-[#64748B] hover:text-[#0F172A] transition-colors duration-300"
+                >
+                  <Linkedin className="h-5 w-5" />
+                </a>
+              )}
+            </div>
+          </div>
+          <Button
+            className="w-full bg-[#F1F5F9] hover:bg-[#E2E8F0] text-[#0F172A] border border-[#64748B]/20 transition-colors duration-300"
+            variant="secondary"
+            onClick={() => navigate(`/company/${encodeURIComponent(company.name)}`)}
+          >
+            View Details
+          </Button>
+        </CardFooter>
+      </Card>
     );
 };
 

@@ -101,7 +101,7 @@ export default function CompanyDetailsPage() {
   }
 
   return (
-    <div className="min-h-screen p-8 font-sans mt-[70px]">
+    <div className="min-h-screen p-8 font-sans mt-[50px]">
       <Navbar isCompany={true}/>
     {/* Company Header */}
     <div className="flex justify-between items-center mb-8">

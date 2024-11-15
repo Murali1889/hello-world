@@ -61,65 +61,13 @@ export default function HomePage() {
   };
 
   return (
-    <div className="min-h-screen p-8 bg-white">
+    <div className="min-h-screen p-8 bg-[#F8FAFC] ">
       <Navbar />
 
-      {!loading && companies.length > 0 && (
-        <div className="flex justify-between items-center mb-8 mt-[150px]">
-          <div className="text-sm text-gray-600">
-            Showing {indexOfFirstCard + 1}-{Math.min(indexOfLastCard, companies.length)} of {companies.length} companies
-          </div>
-          <div className="flex items-center space-x-1.5">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => handlePageChange(currentPage - 1)}
-              disabled={currentPage === 1}
-              className={`w-9 h-9 rounded-lg flex items-center justify-center transition-all duration-200 ${currentPage === 1
-                  ? 'text-gray-400 cursor-not-allowed'
-                  : 'text-[#000040] hover:bg-[#000040]/10'
-                }`}
-            >
-              <ChevronLeft className="h-4 w-4" />
-            </Button>
 
-            {getPageNumbers().map((number, index) => (
-              number === '...' ? (
-                <span key={`ellipsis-${index}`} className="px-2 text-gray-500">•••</span>
-              ) : (
-                <Button
-                  key={number}
-                  variant={currentPage === number ? "default" : "ghost"}
-                  size="sm"
-                  onClick={() => handlePageChange(number)}
-                  className={`w-9 h-9 rounded-lg font-medium transition-all duration-200 ${currentPage === number
-                      ? 'bg-[#000040] text-white hover:bg-[#000040]/90 shadow-sm'
-                      : 'text-[#000040] hover:bg-[#000040]/10'
-                    }`}
-                >
-                  {number}
-                </Button>
-              )
-            ))}
-
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => handlePageChange(currentPage + 1)}
-              disabled={currentPage === totalPages}
-              className={`w-9 h-9 rounded-lg flex items-center justify-center transition-all duration-200 ${currentPage === totalPages
-                  ? 'text-gray-400 cursor-not-allowed'
-                  : 'text-[#000040] hover:bg-[#000040]/10'
-                }`}
-            >
-              <ChevronRight className="h-4 w-4" />
-            </Button>
-          </div>
-        </div>
-      )}
 
       {loading ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-[150px]">
           {[1, 2, 3, 4, 5, 6].map((n) => (
             <Card key={n} className="animate-pulse bg-white">
               <CardHeader className="bg-blue-50 p-4">
@@ -138,7 +86,7 @@ export default function HomePage() {
           ))}
         </div>
       ) : (
-        <div className="flex flex-wrap gap-6">
+        <div className="flex flex-wrap gap-6  justify-center mt-[70px]">
           {currentCompanies.map((company) => (
             <div key={company.company_name} className="w-[calc(100%-1.5rem)] min-[720px]:w-[calc(50%-1.5rem)] min-[1080px]:w-[calc(33.33%-1.5rem)] min-w-[360px]">
               <CompanyCard company={company} />
@@ -151,6 +99,32 @@ export default function HomePage() {
           )}
         </div>
       )}
+
+{!loading && companies.length > 0 && (
+  <div className="flex justify-center gap-[30px] items-center mt-8">
+    <Button
+      variant="outline"
+      className="bg-white text-[#0F172A] border-[#64748B]/20 hover:bg-[#F1F5F9] transition-colors duration-300"
+      onClick={() => handlePageChange(currentPage - 1)}
+      disabled={currentPage === 1}
+    >
+      <ChevronLeft className="w-4 h-4 mr-2" />
+      Previous
+    </Button>
+    <span className="text-[#64748B]">
+      Page {currentPage} of {totalPages}
+    </span>
+    <Button
+      variant="outline"
+      className="bg-white text-[#0F172A] border-[#64748B]/20 hover:bg-[#F1F5F9] transition-colors duration-300"
+      onClick={() => handlePageChange(currentPage + 1)}
+      disabled={currentPage === totalPages}
+    >
+      Next
+      <ChevronRight className="w-4 h-4 ml-2" />
+    </Button>
+  </div>
+)}
     </div>
   );
 }

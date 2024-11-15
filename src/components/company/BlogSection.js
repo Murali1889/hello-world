@@ -12,21 +12,6 @@ import { formatDate } from 'date-fns';
 
 const ITEMS_PER_PAGE = 5;
 
-const getRandomMessage = (type) => {
-  const messages = {
-    linkedin: [
-      "LinkedIn posts are taking a professional development day! 👔",
-      "Posts are networking with other content... 🤝",
-      "Building connections in the digital world... 🌐"
-    ],
-    jobs: [
-      "Job analytics are crunching numbers... 🔢",
-      "Hiring team is doing interview practice! 🎯",
-      "Career opportunities loading... ⌛"
-    ]
-  };
-  return messages[type][Math.floor(Math.random() * messages[type].length)];
-};
 
 const PaginatedContent = ({ data, currentPage, setCurrentPage, renderItem }) => {
   const totalPages = Math.ceil(data.length / ITEMS_PER_PAGE);
@@ -42,6 +27,7 @@ const PaginatedContent = ({ data, currentPage, setCurrentPage, renderItem }) => 
 
 const BlogItem = ({ blog }) => {
   const [isOpen, setIsOpen] = useState(false);
+
 
   const getSummaryPoints = (summary) => {
     if (!summary) return [];
@@ -110,6 +96,7 @@ const BlogSection = ({ company }) => {
   const [timeRemaining, setTimeRemaining] = useState(240); // 4 hours in minutes
   const [expandedItems, setExpandedItems] = useState({});
   const { blogs = [], linkedin_posts = [], linkedin_job_analytics = [] } = company;
+  console.log(blogs.length)
 
   useEffect(() => {
     if (blogs.length === 0) {

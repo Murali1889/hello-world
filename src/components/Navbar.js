@@ -69,7 +69,7 @@ const SearchResults = ({ companies, selectedIndex, onSelect, onMouseEnter }) => 
 );
 
 
-const Navbar = ({isCompany}) => {
+const Navbar = ({ isCompany }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const { companies } = useData();
@@ -242,80 +242,81 @@ const Navbar = ({isCompany}) => {
   };
 
   return (
-    <nav className="fixed top-0 z-50 bg-white right-0 left-0 shadow-md">
-      <header className="relative bg-[#000040] p-[20px]">
-        <div className="px-5 mx-auto" style={{display:isCompany?'flex':'block', justifyContent:'space-between'}}>
-          <div className={`flex justify-between items-center cursor-pointer ${isCompany?'':'mb-8'}`} onClick={()=>{navigate('/')}} >
-            <div className="text-white text-3xl md:text-4xl font-bold">
-              Competitive Intel
-            </div>
-
-            <div className="flex items-center gap-4">
-              {!currentCompany && !isCompany && (
-                <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-                  <DialogTrigger asChild>
-                    <Button className="bg-white text-[#000080] hover:bg-gray-100 px-6 py-2 rounded-full transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105">
-                      <Plus className="mr-2 h-5 w-5" /> Add Company
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent className="sm:max-w-[425px] bg-white/95 backdrop-blur-md">
-                    {isSubmitting ? (
-                      <LoadingComponent progress={progress} messageIndex={messageIndex} loadingMessages={loadingMessages} />
-                    ) : (
-                      <>
-                        <DialogHeader>
-                          <DialogTitle>Add New Company</DialogTitle>
-                        </DialogHeader>
-                        <AddCompanyForm onSubmit={handleSubmit} isSubmitting={isSubmitting} />
-                      </>
-                    )}
-                  </DialogContent>
-                </Dialog>
-              )}
-
-              <Button
-                variant="ghost"
-                className="bg-white text-[#000080] hover:bg-gray-100 px-4 py-2 rounded-full transition-all duration-300"
-                onClick={handleLogout}
-              >
-                <LogOut className="h-4 w-4" />
-              </Button>
-            </div>
-          </div>
-
-          <div className="relative h-fit min-w-[500px]" ref={searchRef}>
-            <Input
-              type="search"
-              placeholder="Search companies..."
-              value={searchTerm}
-              onChange={(e) => {
-                setSearchTerm(e.target.value);
-                setIsListVisible(true);
-                setSelectedIndex(-1);
-              }}
-              onFocus={() => setIsListVisible(true)}
-              onKeyDown={handleKeyDown}
-              className="w-full py-3 pl-12 pr-4 text-gray-700 bg-white bg-opacity-80 rounded-full backdrop-blur-md focus:outline-none focus:ring-2 focus:ring-[#000080] transition-all duration-300"
-            />
-            <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" />
-
-            {isListVisible && searchTerm && filteredCompanies.length > 0 && (
-              <div className="absolute top-full left-0 right-0 mt-2">
-                <SearchResults
-                  companies={filteredCompanies}
-                  selectedIndex={selectedIndex}
-                  onSelect={(company) => {
-                    navigate(`/company/${encodeURIComponent(company.company_name)}`);
-                    setIsListVisible(false);
-                    setSearchTerm('');
+    <nav className="bg-[#0F172A] text-[#F8FAFC] py-4 shadow-md fixed top-0 z-50 right-0 left-0">
+      <div className="mx-auto px-[43px]">
+        <div style={{ display: isCompany ? 'flex' : 'block', justifyContent: 'space-between' }}>
+          <div className={`flex justify-between items-center w-full ${isCompany ? '' : 'mb-1'}`} onClick={() => navigate('/')}>
+            <h1 className="text-2xl font-semibold">Competitive Intel</h1>
+            <div className='flex gap-5'>
+              <div className="relative w-full sm:w-[500px]" ref={searchRef}>
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[#64748B] h-4 w-4" />
+                <Input
+                  type="search"
+                  placeholder="Search companies..."
+                  value={searchTerm}
+                  onChange={(e) => {
+                    setSearchTerm(e.target.value);
+                    setIsListVisible(true);
+                    setSelectedIndex(-1);
                   }}
-                  onMouseEnter={setSelectedIndex}
+                  onFocus={() => setIsListVisible(true)}
+                  onKeyDown={handleKeyDown}
+                  className="w-full pl-10 pr-4 py-2 bg-white border border-[#64748B]/20 rounded-md focus:border-[#06B6D4] focus:ring-1 focus:ring-[#06B6D4] text-[#0F172A] placeholder-[#64748B]"
                 />
+                {isListVisible && searchTerm && filteredCompanies.length > 0 && (
+                  <div className="absolute top-full left-0 right-0 mt-2">
+                    <SearchResults
+                      companies={filteredCompanies}
+                      selectedIndex={selectedIndex}
+                      onSelect={(company) => {
+                        navigate(`/company/${encodeURIComponent(company.company_name)}`);
+                        setIsListVisible(false);
+                        setSearchTerm('');
+                      }}
+                      onMouseEnter={setSelectedIndex}
+                    />
+                  </div>
+                )}
               </div>
-            )}
+
+              <div className="flex items-center gap-4">
+                {!currentCompany && (
+                  <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+                    <DialogTrigger asChild>
+                      <Button className="bg-[#06B6D4] hover:bg-[#0891B2] text-white transition-colors duration-300">
+                        <Plus className="mr-2 h-5 w-5" /> Add Company
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="sm:max-w-[425px] bg-white/95 backdrop-blur-md">
+                      {isSubmitting ? (
+                        <LoadingComponent progress={progress} messageIndex={messageIndex} loadingMessages={loadingMessages} />
+                      ) : (
+                        <>
+                          <DialogHeader>
+                            <DialogTitle>Add New Company</DialogTitle>
+                          </DialogHeader>
+                          <AddCompanyForm onSubmit={handleSubmit} isSubmitting={isSubmitting} />
+                        </>
+                      )}
+                    </DialogContent>
+                  </Dialog>
+                )}
+
+                {!isCompany && (
+                  <Button
+                    variant="ghost"
+                    className="text-[#F8FAFC] hover:text-[#06B6D4] transition-colors duration-300"
+                    onClick={handleLogout}
+                  >
+                    <LogOut className="w-5 h-5 mr-2" />
+                    Logout
+                  </Button>
+                )}
+              </div>
+            </div>
           </div>
         </div>
-      </header>
+      </div>
     </nav>
   );
 };

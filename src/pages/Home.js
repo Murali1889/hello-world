@@ -86,22 +86,26 @@ export default function HomePage() {
           ))}
         </div>
       ) : (
-        <div className="flex flex-wrap gap-6  justify-center mt-[70px]">
-          {currentCompanies.map((company) => (
-            <div key={company.company_name} className="w-[calc(100%-1.5rem)] min-[720px]:w-[calc(50%-1.5rem)] min-[1080px]:w-[calc(33.33%-1.5rem)] min-w-[360px]">
-              <CompanyCard company={company} />
-            </div>
-          ))}
-          {companies.length === 0 && (
-            <div className="w-full min-h-[200px] flex items-center justify-center text-gray-600">
-              <p className="text-lg font-medium">No companies found</p>
-            </div>
-          )}
+        <div className="flex flex-wrap m-auto mt-[50px] mx-[-12px]">
+  <div className="w-full px-[12px]">
+    <div className="flex flex-wrap -mx-3">
+      {currentCompanies.map((company) => (
+        <div key={company.company_name} className="px-3 w-full min-[720px]:w-1/2 min-[1080px]:w-1/3 min-w-[360px] mb-6">
+          <CompanyCard company={company} />
         </div>
+      ))}
+      {companies.length === 0 && (
+        <div className="w-full min-h-[200px] flex items-center justify-center text-gray-600">
+          <p className="text-lg font-medium">No companies found</p>
+        </div>
+      )}
+    </div>
+  </div>
+</div>
       )}
 
 {!loading && companies.length > 0 && (
-  <div className="flex justify-center gap-[30px] items-center mt-8">
+  <div className="flex justify-center gap-[30px] items-center mt-4">
     <Button
       variant="outline"
       className="bg-white text-[#0F172A] border-[#64748B]/20 hover:bg-[#F1F5F9] transition-colors duration-300"

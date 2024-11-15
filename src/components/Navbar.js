@@ -243,11 +243,11 @@ const Navbar = ({ isCompany }) => {
 
   return (
     <nav className="bg-[#0F172A] text-[#F8FAFC] py-4 shadow-md fixed top-0 z-50 right-0 left-0">
-      <div className="mx-auto px-[43px]">
+      <div className={`mx-auto ${isCompany?'px-[30px]':'px-[43px]'}`}>
         <div style={{ display: isCompany ? 'flex' : 'block', justifyContent: 'space-between' }}>
           <div className={`flex justify-between items-center w-full ${isCompany ? '' : 'mb-1'}`} onClick={() => navigate('/')}>
             <h1 className="text-2xl font-semibold">Competitive Intel</h1>
-            <div className='flex gap-5'>
+            <div className={`flex ${isCompany?'gap-0':'gap-5'}`}>
               <div className="relative w-full sm:w-[500px]" ref={searchRef}>
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[#64748B] h-4 w-4" />
                 <Input

@@ -10,6 +10,8 @@ import { useFirebase } from '../context/FirebaseContext';
 import { signOut } from 'firebase/auth';
 import { useMessage } from '../context/MessageContext';
 import LoadingComponent from './LoadingComponent';
+import axios from 'axios';
+
 const AddCompanyForm = ({ onSubmit, isSubmitting }) => (
   <form onSubmit={onSubmit} className="space-y-6 pt-4">
     <div className="space-y-2">
@@ -67,7 +69,7 @@ const SearchResults = ({ companies, selectedIndex, onSelect, onMouseEnter }) => 
 );
 
 
-const Navbar = () => {
+const Navbar = ({isCompany}) => {
   const navigate = useNavigate();
   const location = useLocation();
   const { companies } = useData();
@@ -138,7 +140,9 @@ const Navbar = () => {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  
+
+
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
@@ -147,35 +151,48 @@ const Navbar = () => {
       websiteUrl: formData.get('websiteUrl'),
       linkedinUrl: formData.get('linkedinUrl')
     };
-  
-  
+
     try {
       // Get the current user's ID token
       const idToken = await auth.currentUser.getIdToken();
-  
-      // Make API call only for websiteUrl
-      const response = await fetch('https://0l1ynkbrfl.execute-api.us-east-1.amazonaws.com/prod/company-scraper', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
+
+      // Make API call using axios.post
+      const response = await axios.post(
+        'https://l6ed6gqjaw4gvnh3pxq765zuye0jistj.lambda-url.us-east-1.on.aws/',
+        {
           idToken,
-          url: data.websiteUrl
-        })
-      });
-  
-      if (!response.ok) {
-        throw new Error('API request failed');
-      }
-  
+          url: data.websiteUrl.trim()
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'POST',
+            'Access-Control-Allow-Headers': 'Content-Type, Authorization'
+          }
+        }
+      );
+
+      console.log('Response:', response.data);
+
       setIsDialogOpen(false);
       showSuccess('Company analysis started! We\'ll notify you when it\'s ready.');
-  
+
     } catch (error) {
-      console.error('Error:', error);
-      if (error.message === 'Failed to fetch' || !navigator.onLine) {
+      console.error('Error details:', {
+        message: error.message,
+        response: error.response?.data,
+        status: error.response?.status
+      });
+
+      if (error.code === 'ERR_NETWORK' || !navigator.onLine) {
         showError('Network error. Please check your connection and try again.');
+      } else if (error.response) {
+        // Server responded with error
+        showError(`Server error: ${error.response.data.message || 'Unknown error'}`);
+      } else if (error.request) {
+        // No response received
+        showError('No response received from server. Please try again.');
       } else {
         showInfo('We encountered an issue processing your request. Our team has been notified and will analyze your company within the next hour.');
       }
@@ -225,72 +242,62 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="fixed top-0 z-50 bg-white right-0 left-0 p-4 shadow-md">
-      <header className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex items-center gap-4">
-          {currentCompany ? (
-            <>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => navigate('/')}
-                className="text-white hover:bg-white/10"
-              >
-                <ArrowLeft className="h-5 w-5" />
-              </Button>
-              <div className='relative h-16 w-[150px] rounded-lg p-2 flex-shrink-0 overflow-hidden bg-[#DE85AD]'>
-              {currentCompany.logo ? (
-                                currentCompany.logo.type === 'svg' ? (
-                                    <div
-                                        className="h-full svg w-full p-2"
-                                        dangerouslySetInnerHTML={{
-                                            __html: currentCompany.logo.content
-                                        }}
-                                    />
-                                ) : currentCompany.logo.type === 'img' ? (
-                                    <img
-                                        src={currentCompany.logo.content}
-                                        alt={`${currentCompany.name || 'Company'} logo`}
-                                        className="h-full w-full object-contain"
-                                        onError={(e) => e.target.parentElement.lastChild.className = 'text-3xl font-bold text-white/70'}
-                                    />
-                                ) : (
-                                    <span className="flex h-full w-full items-center justify-center text-3xl font-bold text-[#DE85AD]">
-                                        {(currentCompany.name || 'N/A').charAt(0)}
-                                    </span>
-                                )
-                            ) : (
-                                <span className="flex h-full w-full items-center justify-center text-3xl font-bold text-[#DE85AD]">
-                                    {(currentCompany.name || 'N/A').charAt(0)}
-                                </span>
-                            )}
-              </div>
-            </>
-          ) : (
-            <h1 className="text-3xl font-bold bg-gradient-to-r from-indigo-600 to-rose-600 bg-clip-text text-transparent">
+    <nav className="fixed top-0 z-50 bg-white right-0 left-0 shadow-md">
+      <header className="relative bg-[#000040] p-[20px]">
+        <div className="px-5 mx-auto" style={{display:isCompany?'flex':'block', justifyContent:'space-between'}}>
+          <div className={`flex justify-between items-center cursor-pointer ${isCompany?'':'mb-8'}`} onClick={()=>{navigate('/')}} >
+            <div className="text-white text-3xl md:text-4xl font-bold">
               Competitive Intel
-            </h1>
-          )}
-        </div>
-
-        <div className="flex items-center gap-4">
-          <div className="relative" ref={searchRef}>
-            <div className="flex w-[300px] items-center gap-4 rounded-lg bg-black/90 p-2 backdrop-blur-sm">
-              <Search className="ml-2 h-5 w-5 text-white" />
-              <Input
-                type="search"
-                placeholder="Search companies..."
-                value={searchTerm}
-                onChange={(e) => {
-                  setSearchTerm(e.target.value);
-                  setIsListVisible(true);
-                  setSelectedIndex(-1);
-                }}
-                onFocus={() => setIsListVisible(true)}
-                onKeyDown={handleKeyDown}
-                className="h-8 border-none bg-transparent text-white placeholder:text-white/70 focus-visible:ring-0"
-              />
             </div>
+
+            <div className="flex items-center gap-4">
+              {!currentCompany && !isCompany && (
+                <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+                  <DialogTrigger asChild>
+                    <Button className="bg-white text-[#000080] hover:bg-gray-100 px-6 py-2 rounded-full transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105">
+                      <Plus className="mr-2 h-5 w-5" /> Add Company
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className="sm:max-w-[425px] bg-white/95 backdrop-blur-md">
+                    {isSubmitting ? (
+                      <LoadingComponent progress={progress} messageIndex={messageIndex} loadingMessages={loadingMessages} />
+                    ) : (
+                      <>
+                        <DialogHeader>
+                          <DialogTitle>Add New Company</DialogTitle>
+                        </DialogHeader>
+                        <AddCompanyForm onSubmit={handleSubmit} isSubmitting={isSubmitting} />
+                      </>
+                    )}
+                  </DialogContent>
+                </Dialog>
+              )}
+
+              {/* <Button
+                variant="ghost"
+                className="bg-white text-[#000080] hover:bg-gray-100 px-4 py-2 rounded-full transition-all duration-300"
+                onClick={handleLogout}
+              >
+                <LogOut className="h-4 w-4" />
+              </Button> */}
+            </div>
+          </div>
+
+          <div className="relative h-fit min-w-[500px]" ref={searchRef}>
+            <Input
+              type="search"
+              placeholder="Search companies..."
+              value={searchTerm}
+              onChange={(e) => {
+                setSearchTerm(e.target.value);
+                setIsListVisible(true);
+                setSelectedIndex(-1);
+              }}
+              onFocus={() => setIsListVisible(true)}
+              onKeyDown={handleKeyDown}
+              className="w-full py-3 pl-12 pr-4 text-gray-700 bg-white bg-opacity-80 rounded-full backdrop-blur-md focus:outline-none focus:ring-2 focus:ring-[#000080] transition-all duration-300"
+            />
+            <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" />
 
             {isListVisible && searchTerm && filteredCompanies.length > 0 && (
               <div className="absolute top-full left-0 right-0 mt-2">
@@ -307,41 +314,6 @@ const Navbar = () => {
               </div>
             )}
           </div>
-
-          {!currentCompany && (
-            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-              <DialogTrigger asChild>
-                <Button
-                  variant="secondary"
-                  className="bg-gradient-to-r from-indigo-600 to-rose-600 text-white border-0"
-                >
-                  <Plus className="mr-2 h-4 w-4" />
-                  Add Company
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="sm:max-w-[425px] bg-white/95 backdrop-blur-md">
-                {isSubmitting ? (
-                  <LoadingComponent progress={progress} messageIndex={messageIndex} loadingMessages={loadingMessages} />
-                ) : (
-
-                  <><DialogHeader>
-                    <DialogTitle>Add New Company</DialogTitle>
-                  </DialogHeader>
-                    <AddCompanyForm onSubmit={handleSubmit} isSubmitting={isSubmitting} /></>
-
-                )}
-              </DialogContent>
-            </Dialog>
-          )}
-
-          <Button
-            variant="secondary"
-            className="bg-red-500 text-white border-0"
-            onClick={handleLogout}
-          >
-            <LogOut className="h-4 w-4" />
-            
-          </Button>
         </div>
       </header>
     </nav>

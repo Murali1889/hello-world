@@ -29,7 +29,7 @@ const AddCompanyForm = ({ onSubmit, isSubmitting }) => {
       </div>
       <Button
         type="submit"
-        className="w-full bg-gradient-to-r from-[#DE85AD] to-[#B44F7E] hover:from-[#B44F7E] hover:to-[#DE85AD] text-white"
+        className="w-full bg-gradient-to-r from-[#1E3A8A] to-[#00002B] hover:from-[#00002B] hover:to-[#1E3A8A] text-white"
         disabled={isSubmitting}
       >
         Add Company

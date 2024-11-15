@@ -1,7 +1,14 @@
 // pages/CompanyDetails.js
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Search, Moon, Sun, ArrowLeft } from 'lucide-react';
+import { 
+  Package, 
+  Building, 
+  Activity, 
+  Briefcase, 
+  Zap, 
+  Users 
+} from "lucide-react";
 import { Input } from "../components/ui/input";
 import { Switch } from "../components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/tabs";
@@ -94,52 +101,59 @@ export default function CompanyDetailsPage() {
   }
 
   return (
-    <div className={`min-h-screen p-8 font-sans transition-colors duration-300 ${bgColor} ${textColor}`}>
-
-      <Navbar />
-      <Tabs defaultValue="profile" className="space-y-8 mt-[70px]">
-        <TabsList className={`grid w-full grid-cols-3 ${isDarkMode ? 'bg-slate-800' : 'bg-slate-200'}`}>
-          <TabsTrigger
-            value="profile"
-            className={isDarkMode ? 'data-[state=active]:bg-slate-700 text-slate-100' : 'data-[state=active]:bg-white text-slate-900'}
-          >
-            Company Profile
-          </TabsTrigger>
-          <TabsTrigger
-            value="portfolio"
-            className={isDarkMode ? 'data-[state=active]:bg-slate-700 text-slate-100' : 'data-[state=active]:bg-white text-slate-900'}
-          >
-            Product Portfolio
-          </TabsTrigger>
-          <TabsTrigger
-            value="pulse"
-            className={isDarkMode ? 'data-[state=active]:bg-slate-700 text-slate-100' : 'data-[state=active]:bg-white text-slate-900'}
-          >
-            Company Pulse
-          </TabsTrigger>
-        </TabsList>
-
-       <div className='flex justify-between'>
-        <div className='text-3xl font-bold text-blue-800 w-full'>{company.name}</div>
-       <div className='w-full justify-end text-end'>Last Updated: {formatDate(company.last_updated)}</div>
-       </div>
-
-
-        <TabsContent value="profile">
-          <AboutSection company={company} isDarkMode={isDarkMode} />
-        </TabsContent>
-
-        <TabsContent value="portfolio">
-          <ProductSection products={company.products} isDarkMode={isDarkMode} />
-        </TabsContent>
-
-        <TabsContent value="pulse">
-          <div className="grid grid-cols-1 gap-8">
-            <BlogSection company={company} isDarkMode={isDarkMode} />
-            {/* LinkedIn and Hiring sections can be added here later */}
-          </div>
-        </TabsContent>
-      </Tabs>
+    <div className="min-h-screen p-8 font-sans mt-[70px]">
+      <Navbar isCompany={true}/>
+    {/* Company Header */}
+    <div className="flex justify-between items-center mb-8">
+      <h1 className="text-3xl font-bold text-[#000040]">{company.name}</h1>
+      <span className="text-sm text-gray-500">Last Updated: {formatDate(company.last_updated)}</span>
     </div>
+  
+    {/* Tabs Navigation */}
+    <Tabs defaultValue="profile" className="space-y-8">
+      <TabsList className="w-full h-fit bg-[#F0F1F9]  rounded-lg">
+        <TabsTrigger
+          value="profile"
+          className="flex-1 py-2 text-sm font-medium rounded-md transition-all duration-300 data-[state=active]:bg-white data-[state=active]:text-[#000040] data-[state=active]:shadow-sm hover:bg-white/50"
+        >
+          <Building className="w-4 h-4 mr-2" />
+          Company Profile
+        </TabsTrigger>
+        <TabsTrigger
+          value="portfolio"
+          className="flex-1 py-2 text-sm font-medium rounded-md transition-all duration-300 data-[state=active]:bg-white data-[state=active]:text-[#000040] data-[state=active]:shadow-sm hover:bg-white/50"
+        >
+          <Package className="w-4 h-4 mr-2" />
+          Product Portfolio
+        </TabsTrigger>
+        <TabsTrigger
+          value="pulse"
+          className="flex-1 py-2 text-sm font-medium rounded-md transition-all duration-300 data-[state=active]:bg-white data-[state=active]:text-[#000040] data-[state=active]:shadow-sm hover:bg-white/50"
+        >
+          <Activity className="w-4 h-4 mr-2" />
+          Company Pulse
+        </TabsTrigger>
+      </TabsList>
+  
+  
+      <TabsContent value="profile">
+            <AboutSection company={company} isDarkMode={isDarkMode} />
+          </TabsContent>
+  
+          <TabsContent value="portfolio">
+            <ProductSection products={company.products} isDarkMode={isDarkMode} />
+          </TabsContent>
+  
+          <TabsContent value="pulse">
+            <div className="grid grid-cols-1 gap-8">
+              <BlogSection company={company} isDarkMode={isDarkMode} />
+              {/* LinkedIn and Hiring sections can be added here later */}
+            </div>
+          </TabsContent>
+    </Tabs>
+  </div>
   );
 }
+
+
+

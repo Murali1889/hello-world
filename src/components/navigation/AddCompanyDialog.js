@@ -49,24 +49,25 @@ const AddCompanyDialog = ({ isOpen, onClose }) => {
 
   const handleSubmit = async (websiteUrl) => {
     setIsSubmitting(true);
-    
+
     try {
       const idToken = await auth.currentUser.getIdToken();
 
-      console.log(idToken)
-      
+      // console.log(idToken)
+
       const response = await axios.post('https://0l1ynkbrfl.execute-api.us-east-1.amazonaws.com/prod/company-scraper', {
-          url: websiteUrl,
-          idToken
+        url: websiteUrl,
+        idToken
+      }, {
+        // Optional: Add headers if needed
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${idToken}`
+        }
       });
 
-
-      console.log(response)
-
-      const data = await response.json();
-
-
-      console.log(data)
+      // Access the data directly from response.data
+      const data = response.data;
 
       if (!data.success) {
         throw new Error(data.error || 'Failed to add company');
@@ -76,7 +77,7 @@ const AddCompanyDialog = ({ isOpen, onClose }) => {
         title: "Success",
         description: "Company details added successfully!",
       });
-      
+
       onClose();
     } catch (error) {
       toast({
@@ -93,10 +94,10 @@ const AddCompanyDialog = ({ isOpen, onClose }) => {
   return (
     <DialogContent className="sm:max-w-[425px] bg-white/95 backdrop-blur-md">
       {isSubmitting ? (
-        <LoadingComponent 
-          progress={progress} 
-          messageIndex={messageIndex} 
-          loadingMessages={loadingMessages} 
+        <LoadingComponent
+          progress={progress}
+          messageIndex={messageIndex}
+          loadingMessages={loadingMessages}
         />
       ) : (
         <>

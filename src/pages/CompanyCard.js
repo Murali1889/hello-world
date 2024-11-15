@@ -95,7 +95,7 @@ const CompanyCard = ({ company }) => {
           <Button
             className="w-full bg-[#F1F5F9] hover:bg-[#E2E8F0] text-[#0F172A] border border-[#64748B]/20 transition-colors duration-300"
             variant="secondary"
-            onClick={() => navigate(`/company/${encodeURIComponent(company.name)}`)}
+            onClick={() => navigate(`/company/${encodeURIComponent(company.company_name)}`)}
           >
             View Details
           </Button>

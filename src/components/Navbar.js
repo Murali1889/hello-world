@@ -44,7 +44,7 @@ const AddCompanyForm = ({ onSubmit, isSubmitting }) => (
     </div> */}
     <Button
       type="submit"
-      className="w-full bg-gradient-to-r from-[#DE85AD] to-[#B44F7E] hover:from-[#B44F7E] hover:to-[#DE85AD] text-white"
+      className="w-full bg-gradient-to-r from-[#1E3A8A] to-[#00002B] hover:from-[#00002B] hover:to-[#1E3A8A] text-white"
       disabled={isSubmitting}
     >
       Add Company
@@ -273,13 +273,13 @@ const Navbar = ({isCompany}) => {
                 </Dialog>
               )}
 
-              {/* <Button
+              <Button
                 variant="ghost"
                 className="bg-white text-[#000080] hover:bg-gray-100 px-4 py-2 rounded-full transition-all duration-300"
                 onClick={handleLogout}
               >
                 <LogOut className="h-4 w-4" />
-              </Button> */}
+              </Button>
             </div>
           </div>
 

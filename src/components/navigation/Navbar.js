@@ -3,6 +3,12 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { LogOut, Plus } from 'lucide-react';
 import { Button } from "../ui/button";
 import { Dialog } from "../ui/dialog";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "../ui/tooltip";
 import { useFirebase } from '../../context/FirebaseContext';
 import { useData } from '../../context/DataContext';
 import SearchBar from './SearchBar';
@@ -61,14 +67,23 @@ const Navbar = () => {
             </Dialog>
           )}
 
-          <Button
-            variant="secondary"
-            className="bg-white/20 hover:bg-white/30 text-white border-0"
-            onClick={handleLogout}
-          >
-            <LogOut className="mr-2 h-4 w-4" />
-            Logout
-          </Button>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="w-9 h-9 p-0 bg-white/20 hover:bg-white/30 text-white border-0"
+                  onClick={handleLogout}
+                >
+                  <LogOut className="h-4 w-4" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Logout</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
         </div>
       </header>
     </nav>

@@ -193,137 +193,136 @@ export default function LoginPage() {
 
   // The rest of your JSX code remains exactly the same...
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-purple-400 via-pink-500 to-red-500">
-      
-      <motion.div
-        initial={{ opacity: 0, scale: 0.9 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.5 }}
-        className="w-full max-w-md"
-
-      >
-        <Card className="overflow-hidden shadow-2xl bg-white">
-          <div className="p-8">
-            <motion.h1
-              className="text-3xl font-bold text-center mb-6 bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-600"
-              initial={{ y: -20 }}
-              animate={{ y: 0 }}
-              transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
+    <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-[#000040] via-[#1E3A8A] to-[#00002B]">
+    <motion.div
+      initial={{ opacity: 0, scale: 0.9 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ duration: 0.5 }}
+      className="w-full max-w-md"
+    >
+      <Card className="overflow-hidden shadow-2xl bg-white">
+        <div className="p-8">
+          <motion.h1
+            className="text-3xl font-bold text-center mb-6 bg-clip-text text-transparent bg-gradient-to-r from-[#000040] to-[#1E3A8A]"
+            initial={{ y: -20 }}
+            animate={{ y: 0 }}
+            transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
+          >
+            {isLogin ? "Welcome Back!" : "Join Us Today"}
+          </motion.h1>
+          <AnimatePresence mode="wait">
+            <motion.form
+              key={isLogin ? "login" : "signup"}
+              initial={{ x: 20, opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              exit={{ x: -20, opacity: 0 }}
+              transition={{ duration: 0.3 }}
+              onSubmit={handleSubmit}
+              className="space-y-4"
             >
-              {isLogin ? "Welcome Back!" : "Join Us Today"}
-            </motion.h1>
-            <AnimatePresence mode="wait">
-              <motion.form
-                key={isLogin ? "login" : "signup"}
-                initial={{ x: 20, opacity: 0 }}
-                animate={{ x: 0, opacity: 1 }}
-                exit={{ x: -20, opacity: 0 }}
-                transition={{ duration: 0.3 }}
-                onSubmit={handleSubmit}
-                className="space-y-4"
-              >
-                <div className="space-y-2">
-                  <Label htmlFor="email" className="text-sm font-medium text-gray-700">Email <span className="ml-2 text-xs text-purple-600 font-normal">
-                    (@hyperverge.co only)
-                  </span></Label>
-                  <div className="relative">
-                    <HiOutlineMail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-                    <Input
-                      id="email"
-                      type="email"
-                      placeholder="Enter your email"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      required
-                      className="pl-10"
-                    />
-                  </div>
+              <div className="space-y-2">
+                <Label htmlFor="email" className="text-sm font-medium text-gray-700">Email <span className="ml-2 text-xs text-[#000040] font-normal">
+                  (@hyperverge.co only)
+                </span></Label>
+                <div className="relative">
+                  <HiOutlineMail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                  <Input
+                    id="email"
+                    type="email"
+                    placeholder="Enter your email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
+                    className="pl-10"
+                  />
                 </div>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="password" className="text-sm font-medium text-gray-700">Password</Label>
+                <div className="relative">
+                  <RiLockPasswordLine className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                  <Input
+                    id="password"
+                    type="password"
+                    placeholder={isLogin ? "Enter your password" : "Create a password"}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                    className="pl-10"
+                  />
+                </div>
+              </div>
+              {!isLogin && (
                 <div className="space-y-2">
-                  <Label htmlFor="password" className="text-sm font-medium text-gray-700">Password</Label>
+                  <Label htmlFor="confirm-password" className="text-sm font-medium text-gray-700">Confirm Password</Label>
                   <div className="relative">
                     <RiLockPasswordLine className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
                     <Input
-                      id="password"
+                      id="confirm-password"
                       type="password"
-                      placeholder={isLogin ? "Enter your password" : "Create a password"}
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
+                      placeholder="Confirm your password"
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
                       required
                       className="pl-10"
                     />
                   </div>
                 </div>
-                {!isLogin && (
-                  <div className="space-y-2">
-                    <Label htmlFor="confirm-password" className="text-sm font-medium text-gray-700">Confirm Password</Label>
-                    <div className="relative">
-                      <RiLockPasswordLine className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-                      <Input
-                        id="confirm-password"
-                        type="password"
-                        placeholder="Confirm your password"
-                        value={confirmPassword}
-                        onChange={(e) => setConfirmPassword(e.target.value)}
-                        required
-                        className="pl-10"
-                      />
-                    </div>
-                  </div>
-                )}
-                <Button
-                  type="submit"
-                  className="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white"
-                  disabled={isLoading}
-                >
-                  {isLoading ? (
-                    <motion.div
-                      className="h-5 w-5 rounded-full border-t-2 border-r-2 border-white"
-                      animate={{ rotate: 360 }}
-                      transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                    />
-                  ) : (
-                    isLogin ? "Log In" : "Sign Up"
-                  )}
-                </Button>
-              </motion.form>
-            </AnimatePresence>
-
-            <div className="mt-6">
-              <div className="relative">
-                <div className="absolute inset-0 flex items-center">
-                  <div className="w-full border-t border-gray-300"></div>
-                </div>
-                <div className="relative flex justify-center text-sm">
-                  <span className="px-2 bg-white text-gray-500">Or continue with</span>
-                </div>
-              </div>
+              )}
               <Button
-                variant="outline"
-                className="w-full mt-4"
-                onClick={handleGoogleAuth}
+                type="submit"
+                className="w-full bg-gradient-to-r from-[#1E3A8A] to-[#000040] hover:from-[#000040] hover:to-[#1E3A8A] text-white"
                 disabled={isLoading}
               >
-                <FcGoogle className="mr-2 h-4 w-4" />
-                {isLogin ? "Log in" : "Sign up"} with Google
+                {isLoading ? (
+                  <motion.div
+                    className="h-5 w-5 rounded-full border-t-2 border-r-2 border-white"
+                    animate={{ rotate: 360 }}
+                    transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                  />
+                ) : (
+                  isLogin ? "Log In" : "Sign Up"
+                )}
               </Button>
-            </div>
-          </div>
+            </motion.form>
+          </AnimatePresence>
 
-          <div className="px-8 py-4 bg-gray-50 border-t border-gray-100">
-            <p className="text-sm text-center text-gray-600">
-              {isLogin ? "Don't have an account?" : "Already have an account?"}{' '}
-              <button
-                type="button"
-                onClick={() => setIsLogin(!isLogin)}
-                className="font-medium text-purple-600 hover:text-purple-500"
-              >
-                {isLogin ? "Sign up" : "Log in"}
-              </button>
-            </p>
+          <div className="mt-6">
+            <div className="relative">
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t border-gray-300"></div>
+              </div>
+              <div className="relative flex justify-center text-sm">
+                <span className="px-2 bg-white text-gray-500">Or continue with</span>
+              </div>
+            </div>
+            <Button
+              variant="outline"
+              className="w-full mt-4 border-[#000040]/20 hover:bg-[#000040]/5"
+              onClick={handleGoogleAuth}
+              disabled={isLoading}
+            >
+              <FcGoogle className="mr-2 h-4 w-4" />
+              {isLogin ? "Log in" : "Sign up"} with Google
+            </Button>
           </div>
-        </Card>
-      </motion.div>
-    </div>
+        </div>
+
+        <div className="px-8 py-4 bg-[#F0F1F9] border-t border-[#000040]/10">
+          <p className="text-sm text-center text-gray-600">
+            {isLogin ? "Don't have an account?" : "Already have an account?"}{' '}
+            <button
+              type="button"
+              onClick={() => setIsLogin(!isLogin)}
+              className="font-medium text-[#000040] hover:text-[#1E3A8A]"
+            >
+              {isLogin ? "Sign up" : "Log in"}
+            </button>
+          </p>
+        </div>
+      </Card>
+    </motion.div>
+  </div>
+
   );
 }

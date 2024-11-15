@@ -37,7 +37,7 @@ export const AuthProvider = ({ children }) => {
         let mounted = true;
         
         const unsubscribe = onAuthStateChanged(auth, async (user) => {
-            console.log(await user.getIdToken())
+            // console.log(await user.getIdToken())
             if (!mounted) return;
             
             setIsVerifying(true);

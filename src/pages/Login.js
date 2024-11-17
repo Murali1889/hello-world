@@ -123,62 +123,62 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-[#000040] via-[#1E3A8A] to-[#00002B]">
+    <div className="min-h-screen flex items-center justify-center p-4 bg-[#F5F5F0]">
       <div className="w-full max-w-md">
-        <Card className="overflow-hidden shadow-2xl bg-white">
+        <Card className="overflow-hidden bg-[#1B365D] border-none">
           <div className="p-8">
-            <h1 className="text-3xl font-bold text-center mb-6 bg-clip-text text-transparent bg-gradient-to-r from-[#000040] to-[#1E3A8A]">
+            <h1 className="text-3xl font-bold text-center mb-6 bg-clip-text text-transparent bg-white">
               {isLogin ? "Welcome Back!" : "Create Account"}
             </h1>
 
             <form onSubmit={handleEmailAuth} className="space-y-4">
-              <div className="space-y-2">
+              <div className="space-y-2 text-[#E0E0E0]">
                 <Label htmlFor="email">
                   Email 
-                  <span className="ml-2 text-xs text-[#000040] font-normal">(@hyperverge.co only)</span>
+                  <span className="ml-2 text-xs font-normal">(@hyperverge.co only)</span>
                 </Label>
                 <div className="relative">
-                  <HiOutlineMail className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+                  <HiOutlineMail className="absolute left-3 top-1/2 -translate-y-1/2 text-[#333333]" />
                   <Input
                     id="email"
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="Enter your email"
-                    className="pl-10"
+                    className="pl-10 placeholder-[#B0B8C1] border-[#DADADA] bg-white text-[#1B365D]"
                     required
                   />
                 </div>
               </div>
 
-              <div className="space-y-2">
+              <div className="space-y-2 text-[#E0E0E0]">
                 <Label htmlFor="password">Password</Label>
                 <div className="relative">
-                  <RiLockPasswordLine className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+                  <RiLockPasswordLine className="absolute left-3 top-1/2 -translate-y-1/2 text-[#333333]" />
                   <Input
                     id="password"
                     type="password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder={isLogin ? "Enter password" : "Create password"}
-                    className="pl-10"
+                    className="pl-10 placeholder-[#B0B8C1] border-[#DADADA] focus:none bg-white text-[#1B365D]" 
                     required
                   />
                 </div>
               </div>
 
               {!isLogin && (
-                <div className="space-y-2">
+                <div className="space-y-2 text-[#E0E0E0]">
                   <Label htmlFor="confirm-password">Confirm Password</Label>
                   <div className="relative">
-                    <RiLockPasswordLine className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+                    <RiLockPasswordLine className="absolute left-3 top-1/2 -translate-y-1/2 text-[#333333]" />
                     <Input
                       id="confirm-password"
                       type="password"
                       value={confirmPassword}
                       onChange={(e) => setConfirmPassword(e.target.value)}
                       placeholder="Confirm password"
-                      className="pl-10"
+                      className="pl-10 placeholder-[#B0B8C1] border-[#DADADA] focus:none bg-white text-[#1B365D]"
                       required
                     />
                   </div>
@@ -188,10 +188,10 @@ export default function LoginPage() {
               <Button
                 type="submit"
                 disabled={isLoading}
-                className="w-full bg-gradient-to-r from-[#1E3A8A] to-[#000040] hover:from-[#000040] hover:to-[#1E3A8A] text-white"
+                className="w-full bg-[#FF8C69] text-white"
               >
                 {isLoading ? (
-                  <div className="h-5 w-5 animate-spin rounded-full border-t-2 border-r-2 border-white" />
+                  <div className="h-5 w-5 animate-spin rounded-full border-t-2 border-r-2" />
                 ) : (
                   isLogin ? "Log In" : "Sign Up"
                 )}
@@ -204,7 +204,7 @@ export default function LoginPage() {
                   <div className="w-full border-t border-gray-300"></div>
                 </div>
                 <div className="relative flex justify-center text-sm">
-                  <span className="px-2 bg-white text-gray-500">Or continue with</span>
+                  <span className="px-2 bg-white text-gray-500 rounded">Or continue with</span>
                 </div>
               </div>
 
@@ -213,7 +213,7 @@ export default function LoginPage() {
                 variant="outline"
                 disabled={isLoading}
                 onClick={handleGoogleAuth}
-                className="w-full mt-4 border-[#000040]/20 hover:bg-[#000040]/5"
+                className="w-full mt-6 bg-white  text-[#1B365D]"
               >
                 <FcGoogle className="mr-2 h-4 w-4" />
                 {isLogin ? "Log in" : "Sign up"} with Google
@@ -221,7 +221,7 @@ export default function LoginPage() {
             </div>
           </div>
 
-          <div className="px-8 py-4 bg-[#F0F1F9] border-t border-[#000040]/10">
+          <div className="px-8 py-4 bg-white border-t border-[#000040]/10">
             <p className="text-sm text-center text-gray-600">
               {isLogin ? "Don't have an account?" : "Already have an account?"}{' '}
               <button
@@ -232,7 +232,7 @@ export default function LoginPage() {
                   setPassword('');
                   setConfirmPassword('');
                 }}
-                className="font-medium text-[#000040] hover:text-[#1E3A8A]"
+                className="font-medium text-[#FF8C69] hover:text-[#FF8C69]"
               >
                 {isLogin ? "Sign up" : "Log in"}
               </button>

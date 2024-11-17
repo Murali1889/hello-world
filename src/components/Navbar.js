@@ -242,14 +242,14 @@ const Navbar = ({ isCompany }) => {
   };
 
   return (
-    <nav className="bg-[#0F172A] text-[#F8FAFC] py-4 shadow-md fixed top-0 z-50 right-0 left-0">
+    <nav className="bg-[#1B365D] text-[#FFFFFF] py-4 shadow-md fixed top-0 z-50 right-0 left-0">
       <div className={`mx-auto ${isCompany?'px-[30px]':'px-[43px]'}`}>
         <div style={{ display: isCompany ? 'flex' : 'block', justifyContent: 'space-between' }}>
-          <div className={`flex justify-between items-center w-full ${isCompany ? '' : 'mb-1'}`} onClick={() => navigate('/')}>
-            <h1 className="text-2xl font-semibold">Competitive Intel</h1>
+          <div className={`flex justify-between items-center w-full ${isCompany ? '' : 'mb-1'}`} >
+            <h1 className="text-2xl font-semibold" onClick={() => navigate('/')}>Competitive Intel</h1>
             <div className={`flex ${isCompany?'gap-0':'gap-5'}`}>
               <div className="relative w-full sm:w-[500px]" ref={searchRef}>
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[#64748B] h-4 w-4" />
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[#E0E0E0] h-4 w-4" />
                 <Input
                   type="search"
                   placeholder="Search companies..."
@@ -261,7 +261,7 @@ const Navbar = ({ isCompany }) => {
                   }}
                   onFocus={() => setIsListVisible(true)}
                   onKeyDown={handleKeyDown}
-                  className="w-full pl-10 pr-4 py-2 bg-white border border-[#64748B]/20 rounded-md focus:border-[#06B6D4] focus:ring-1 focus:ring-[#06B6D4] text-[#0F172A] placeholder-[#64748B]"
+                  className="w-full pl-10 pr-4 py-2 bg-white rounded-md focus:border-none text-[#0F172A] bg-[#FFFFFF] placeholder-[#B0B8C1]"
                 />
                 {isListVisible && searchTerm && filteredCompanies.length > 0 && (
                   <div className="absolute top-full left-0 right-0 mt-2">
@@ -283,7 +283,7 @@ const Navbar = ({ isCompany }) => {
                 {!currentCompany && (
                   <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                     <DialogTrigger asChild>
-                      <Button className="bg-[#06B6D4] hover:bg-[#0891B2] text-white transition-colors duration-300">
+                      <Button className="bg-[#FF8C69] hover:bg-[#FF8C69] text-white transition-colors duration-300">
                         <Plus className="mr-2 h-5 w-5" /> Add Company
                       </Button>
                     </DialogTrigger>
@@ -305,7 +305,7 @@ const Navbar = ({ isCompany }) => {
                 {!isCompany && (
                   <Button
                     variant="ghost"
-                    className="text-[#F8FAFC] hover:text-[#06B6D4] transition-colors duration-300"
+                    className="text-[#FFFFFF] hover:text-[#06B6D4] transition-colors duration-300"
                     onClick={handleLogout}
                   >
                     <LogOut className="w-5 h-5 mr-2" />

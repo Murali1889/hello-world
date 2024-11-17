@@ -61,7 +61,7 @@ export default function HomePage() {
   };
 
   return (
-    <div className="min-h-screen p-8 bg-[#F8FAFC] ">
+    <div className="min-h-screen p-8 bg-[#F5F5F0] ">
       <Navbar />
 
 
@@ -108,11 +108,11 @@ export default function HomePage() {
   <div className="flex justify-center gap-[30px] items-center mt-4">
     <Button
       variant="outline"
-      className="bg-white text-[#0F172A] border-[#64748B]/20 hover:bg-[#F1F5F9] transition-colors duration-300"
+      className="bg-white text-[#1B365D] border-[#64748B]/20 hover:bg-[#F1F5F9] transition-colors duration-300"
       onClick={() => handlePageChange(currentPage - 1)}
       disabled={currentPage === 1}
     >
-      <ChevronLeft className="w-4 h-4 mr-2" />
+      <ChevronLeft className="w-4 h-4 mr-2 text-[#1B365D]" />
       Previous
     </Button>
     <span className="text-[#64748B]">
@@ -120,12 +120,12 @@ export default function HomePage() {
     </span>
     <Button
       variant="outline"
-      className="bg-white text-[#0F172A] border-[#64748B]/20 hover:bg-[#F1F5F9] transition-colors duration-300"
+      className="bg-white text-[#1B365D] border-[#64748B]/20 hover:bg-[#F1F5F9] transition-colors duration-300"
       onClick={() => handlePageChange(currentPage + 1)}
       disabled={currentPage === totalPages}
     >
       Next
-      <ChevronRight className="w-4 h-4 ml-2" />
+      <ChevronRight className="w-4 h-4 ml-2 text-[#1B365D]" />
     </Button>
   </div>
 )}

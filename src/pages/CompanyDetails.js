@@ -1,13 +1,13 @@
 // pages/CompanyDetails.js
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { 
-  Package, 
-  Building, 
-  Activity, 
-  Briefcase, 
-  Zap, 
-  Users 
+import {
+  Package,
+  Building,
+  Activity,
+  Briefcase,
+  Zap,
+  Users
 } from "lucide-react";
 import { Input } from "../components/ui/input";
 import { Switch } from "../components/ui/switch";
@@ -33,14 +33,14 @@ export default function CompanyDetailsPage() {
     try {
       const date = new Date(dateString);
       if (isNaN(date.getTime())) return null;
-      
+
       // Format relative time
       const now = new Date();
       const diff = now - date;
       const minutes = Math.floor(diff / 60000);
       const hours = Math.floor(minutes / 60);
       const days = Math.floor(hours / 24);
-  
+
       if (days > 30) {
         return date.toLocaleDateString('en-US', {
           year: 'numeric',
@@ -102,56 +102,66 @@ export default function CompanyDetailsPage() {
 
   return (
     <div className="min-h-screen p-8 font-sans mt-[50px]">
-      <Navbar isCompany={true}/>
-    {/* Company Header */}
-    <div className="flex justify-between items-center mb-8">
-      <h1 className="text-3xl font-bold text-[#000040]">{company.name}</h1>
-      <span className="text-sm text-gray-500">Last Updated: {formatDate(company.last_updated)}</span>
-    </div>
-  
-    {/* Tabs Navigation */}
-    <Tabs defaultValue="profile" className="space-y-8">
-      <TabsList className="w-full h-fit bg-[#F0F1F9]  rounded-lg">
-        <TabsTrigger
-          value="profile"
-          className="flex-1 py-2 text-sm font-medium rounded-md transition-all duration-300 data-[state=active]:bg-white data-[state=active]:text-[#000040] data-[state=active]:shadow-sm hover:bg-white/50"
-        >
-          <Building className="w-4 h-4 mr-2" />
-          Company Profile
-        </TabsTrigger>
-        <TabsTrigger
-          value="portfolio"
-          className="flex-1 py-2 text-sm font-medium rounded-md transition-all duration-300 data-[state=active]:bg-white data-[state=active]:text-[#000040] data-[state=active]:shadow-sm hover:bg-white/50"
-        >
-          <Package className="w-4 h-4 mr-2" />
-          Product Portfolio
-        </TabsTrigger>
-        <TabsTrigger
-          value="pulse"
-          className="flex-1 py-2 text-sm font-medium rounded-md transition-all duration-300 data-[state=active]:bg-white data-[state=active]:text-[#000040] data-[state=active]:shadow-sm hover:bg-white/50"
-        >
-          <Activity className="w-4 h-4 mr-2" />
-          Company Pulse
-        </TabsTrigger>
-      </TabsList>
-  
-  
-      <TabsContent value="profile">
-            <AboutSection company={company} isDarkMode={isDarkMode} />
-          </TabsContent>
-  
-          <TabsContent value="portfolio">
-            <ProductSection products={company.products} isDarkMode={isDarkMode} />
-          </TabsContent>
-  
-          <TabsContent value="pulse">
-            <div className="grid grid-cols-1 gap-8">
-              <BlogSection company={company} isDarkMode={isDarkMode} />
-              {/* LinkedIn and Hiring sections can be added here later */}
-            </div>
-          </TabsContent>
-    </Tabs>
+      <Navbar isCompany={true} />
+      {/* Company Header */}
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-3xl font-bold text-[#1B365D]">{company.name}</h1>
+        <span className="text-sm text-[#6B7280]">Last Updated: <span className='text-[#4A4A4A]'>{formatDate(company.last_updated)}</span></span>
+      </div>
+
+      {/* Tabs Navigation */}
+      <Tabs defaultValue="profile" className="space-y-8">
+  {/* Tabs Navigation */}
+  <TabsList className="w-full bg-white border-b border-[#E5E7EB] shadow-sm">
+    <TabsTrigger
+      value="profile"
+      className="flex-1 py-2 rounded-none text-sm font-medium text-gray-500 transition-all duration-300 hover:bg-[#F8F9FC] hover:text-[#1B365D] data-[state=active]:text-[#1B365D] data-[state=active]:border-b-2 data-[state=active]:border-[#FF8C69] data-[state=active]:font-semibold"
+    >
+      <Building className="w-4 h-4 mr-2 text-gray-500 data-[state=active]:text-[#1B365D]" />
+      Company Profile
+    </TabsTrigger>
+    <TabsTrigger
+      value="portfolio"
+      className="flex-1 py-2 rounded-none text-sm font-medium text-gray-500 transition-all duration-300 hover:bg-[#F8F9FC] hover:text-[#1B365D] data-[state=active]:text-[#1B365D] data-[state=active]:border-b-2 data-[state=active]:border-[#FF8C69] data-[state=active]:font-semibold"
+    >
+      <Package className="w-4 h-4 mr-2 text-gray-500 data-[state=active]:text-[#1B365D]" />
+      Product Portfolio
+    </TabsTrigger>
+    <TabsTrigger
+      value="pulse"
+      className="flex-1 py-2 rounded-none text-sm font-medium text-gray-500 transition-all duration-300 hover:bg-[#F8F9FC] hover:text-[#1B365D] data-[state=active]:text-[#1B365D] data-[state=active]:border-b-2 data-[state=active]:border-[#FF8C69] data-[state=active]:font-semibold"
+    >
+      <Activity className="w-4 h-4 mr-2 text-gray-500 data-[state=active]:text-[#1B365D]" />
+      Company Pulse
+    </TabsTrigger>
+  </TabsList>
+
+  {/* Tabs Content */}
+  <div className="space-y-8">
+    {/* Profile Tab */}
+    <TabsContent value="profile">
+      <div className="bg-[#F8F9FC] p-6 rounded-lg border border-[#E5E7EB]">
+        <AboutSection company={company} isDarkMode={isDarkMode} />
+      </div>
+    </TabsContent>
+
+    {/* Portfolio Tab */}
+    <TabsContent value="portfolio">
+      <div className="bg-[#F8F9FC] p-6 rounded-lg border border-[#E5E7EB]">
+        <ProductSection products={company.products} isDarkMode={isDarkMode} />
+      </div>
+    </TabsContent>
+
+    {/* Pulse Tab */}
+    <TabsContent value="pulse">
+      <div className="bg-[#F8F9FC] p-6 rounded-lg border border-[#E5E7EB]">
+        <BlogSection company={company} isDarkMode={isDarkMode} />
+        {/* Additional LinkedIn and Hiring sections can be added here */}
+      </div>
+    </TabsContent>
   </div>
+</Tabs>
+    </div>
   );
 }
 

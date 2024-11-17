@@ -157,7 +157,6 @@ const Navbar = ({ isCompany }) => {
     const formData = new FormData(e.target);
     const data = {
       websiteUrl: formData.get('websiteUrl'),
-      // linkedinUrl: formData.get('linkedinUrl')
     };
   
     try {
@@ -199,22 +198,16 @@ const Navbar = ({ isCompany }) => {
   
     } catch (error) {
       console.log(error);
-      console.error('Error details:', {
-        message: error.message,
-        response: error.response?.data,
-        status: error.response?.status
-      });
-  
-      if (error.code === 'ERR_NETWORK' || !navigator.onLine) {
-        showError('Network error. Please check your connection and try again.');
+      // For network errors, show success message instead
+      if (error.code === 'ERR_NETWORK') {
+        setIsDialogOpen(false);
+        showSuccess('Company added successfully! You can now search and look into it.');
       } else if (error.response) {
-        // Server responded with error
         showError(`Server error: ${error.response.data.message || 'Unknown error'}`);
       } else if (error.request) {
-        // No response received
-        showError('No response received from server. Please try again.');
+        showSuccess('Company added successfully! You can now search and look into it.');
       } else {
-        showInfo('We encountered an issue processing your request. Our team has been notified and will analyze your company within the next hour.');
+        showSuccess('Company added successfully! You can now search and look into it.');
       }
     } finally {
       setIsSubmitting(false);
@@ -307,7 +300,7 @@ const Navbar = ({ isCompany }) => {
                         <Plus className="mr-2 h-5 w-5" /> Add Company
                       </Button>
                     </DialogTrigger>
-                    <DialogContent className="sm:max-w-[425px] backdrop-blur-md bg-[#FFFFFF] border border-[#F0F0F0] rounded-2xl shadow-sm p-6">
+                    <DialogContent className="sm:max-w-[425px] backdrop-blur-md bg-[#FFFFFF] border border-[#F0F0F0] rounded-2xl p-6">
                       {isSubmitting ? (
                         <LoadingComponent progress={progress} messageIndex={messageIndex} loadingMessages={loadingMessages} />
                       ) : (

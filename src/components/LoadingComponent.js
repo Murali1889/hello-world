@@ -3,7 +3,7 @@ import { Progress } from '../components/ui/progress';
 
 const LoadingComponent = ({ progress, messageIndex, loadingMessages }) => {
   return (
-    <div className="relative h-full w-full rounded-2xl bg-[#FFFFFF] shadow-md">
+    <div className="relative h-full w-full rounded-2xl bg-[#FFFFFF]">
       <div className="relative flex h-full flex-col items-center justify-center p-8">
         {/* Spinner */}
         <div className="mb-8 flex items-center justify-center">

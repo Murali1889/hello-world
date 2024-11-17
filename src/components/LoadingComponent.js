@@ -38,13 +38,13 @@ const LoadingComponent = ({ progress, messageIndex, loadingMessages }) => {
 
           {/* Progress bar */}
           <div className="space-y-2">
-            <Progress
+            {/* <Progress
               value={progress}
               className="h-2 w-full bg-[#F8F9FC] rounded-lg"
               style={{
                 '--tw-progress-fill': '#FF8C69',
               }}
-            />
+            /> */}
             <p className="text-center text-sm font-medium text-[#1B365D]">{progress}%</p>
           </div>
         </div>

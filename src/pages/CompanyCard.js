@@ -22,11 +22,11 @@ const formatDate = (dateString) => {
 const CompanyCard = ({ company }) => {
     const navigate = useNavigate();
 
-    console.log(company)
+    // console.log(company)
     return (
         <Card className="bg-[#FFFFFF] rounded-lg overflow-hidden transition-all duration-300">
         <CardContent className="p-6">
-          <div className="aspect-[4/1] relative mb-4 bg-[#F8F9FA] rounded-md overflow-hidden px-5 py-3">
+          <div className="aspect-[4/1] relative mb-4 bg-gray-200 rounded-md overflow-hidden px-5 py-3">
             {company.logo ? (
               company.logo.type === 'svg' ? (
                 <div

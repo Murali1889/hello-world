@@ -13,7 +13,7 @@ import LoadingComponent from './LoadingComponent';
 import axios from 'axios';
 
 const AddCompanyForm = ({ onSubmit, isSubmitting, errorMessage }) => (
-  <form onSubmit={onSubmit} className="space-y-6 pt-4 bg-[#FFFFFF] rounded-2xl shadow-sm">
+  <form onSubmit={onSubmit} className="space-y-6 pt-4 bg-[#FFFFFF] rounded-2xl">
     {/* Header */}
     <div className="flex justify-between items-center mb-6">
       <h2 className="text-[#1B365D] font-semibold text-xl">Add New Company</h2>
@@ -80,6 +80,7 @@ const Navbar = ({ isCompany }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const { companies } = useData();
+  // console.log(companies)
   const { auth } = useFirebase();
   const [searchTerm, setSearchTerm] = useState('');
   const [isListVisible, setIsListVisible] = useState(false);
@@ -89,7 +90,7 @@ const Navbar = ({ isCompany }) => {
   const [progress, setProgress] = useState(0);
   const [messageIndex, setMessageIndex] = useState(0);
   const searchRef = useRef(null);
-  const { showSuccess, showError, showInfo } = useMessage();
+  const { showSuccess, showError, showInfo, showWarning } = useMessage();
 
   const loadingMessages = [
     "Analyzing company data structures...",
@@ -126,7 +127,7 @@ const Navbar = ({ isCompany }) => {
   }, [isSubmitting]);
 
 
-  console.log(progress)
+  // console.log(progress)
   const currentCompanyName = location.pathname.startsWith('/company/')
     ? decodeURIComponent(location.pathname.split('/company/')[1])
     : null;
@@ -156,13 +157,28 @@ const Navbar = ({ isCompany }) => {
     const formData = new FormData(e.target);
     const data = {
       websiteUrl: formData.get('websiteUrl'),
-      linkedinUrl: formData.get('linkedinUrl')
+      // linkedinUrl: formData.get('linkedinUrl')
     };
-
+  
     try {
+      // Extract domain from URL for comparison
+      const urlDomain = new URL(data.websiteUrl.trim()).hostname.replace('www.', '');
+      
+      // Check if company already exists by comparing domains
+      const existingCompany = companies.find(company => {
+        const companyDomain = new URL(company.url).hostname.replace('www.', '');
+        return companyDomain === urlDomain;
+      });
+  
+      if (existingCompany) {
+        showWarning(`This company is already in our database. Company name: ${existingCompany.company_name || 'Unknown'}. Please try another company or check the existing list.`);
+        setIsSubmitting(false);
+        return;
+      }
+  
       // Get the current user's ID token
       const idToken = await auth.currentUser.getIdToken();
-
+  
       // Make API call using axios.post
       const response = await axios.post(
         'https://l6ed6gqjaw4gvnh3pxq765zuye0jistj.lambda-url.us-east-1.on.aws/',
@@ -172,26 +188,23 @@ const Navbar = ({ isCompany }) => {
         },
         {
           headers: {
-            'Content-Type': 'application/json',
-            'Access-Control-Allow-Origin': '*',
-            'Access-Control-Allow-Methods': 'POST',
-            'Access-Control-Allow-Headers': 'Content-Type, Authorization'
+            'Content-Type': 'application/json'
           }
         }
       );
-
+  
       console.log('Response:', response.data);
-
       setIsDialogOpen(false);
       showSuccess('Company analysis started! We\'ll notify you when it\'s ready.');
-
+  
     } catch (error) {
+      console.log(error);
       console.error('Error details:', {
         message: error.message,
         response: error.response?.data,
         status: error.response?.status
       });
-
+  
       if (error.code === 'ERR_NETWORK' || !navigator.onLine) {
         showError('Network error. Please check your connection and try again.');
       } else if (error.response) {
@@ -253,7 +266,7 @@ const Navbar = ({ isCompany }) => {
       <div className={`mx-auto ${isCompany?'px-[30px]':'px-[43px]'}`}>
         <div style={{ display: isCompany ? 'flex' : 'block', justifyContent: 'space-between' }}>
           <div className={`flex justify-between items-center w-full ${isCompany ? '' : 'mb-1'}`} >
-            <h1 className="text-2xl font-semibold" onClick={() => navigate('/')}>Competitive Intel</h1>
+            <h1 className="text-2xl font-semibold cursor-pointer" onClick={() => navigate('/')}>Competitive Intel</h1>
             <div className={`flex ${isCompany?'gap-0':'gap-5'}`}>
               <div className="relative w-full sm:w-[500px]" ref={searchRef}>
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[#E0E0E0] h-4 w-4" />

@@ -82,7 +82,7 @@ const AboutSection = ({ company }) => {
             </CardTitle>
           </CardHeader>
           <CardContent className="p-6">
-            <ScrollArea className="h-32 w-full overflow-y-auto scrollbar-thin scrollbar-thumb-[#E0E6ED] scrollbar-track-[#F8F9FC]">
+            <ScrollArea className="h-32 w-full overflow-y-auto scrollbar-thin scrollbar-thumb-[#E0E6ED] scrollbar-track-[#F8F9FC] min-h-[250px]">
               {company.clients && company.clients.length > 0 ? (
                 <div className="flex flex-wrap gap-2">
                   {company.clients.map((client, index) => (

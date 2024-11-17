@@ -12,39 +12,46 @@ import { useMessage } from '../context/MessageContext';
 import LoadingComponent from './LoadingComponent';
 import axios from 'axios';
 
-const AddCompanyForm = ({ onSubmit, isSubmitting }) => (
-  <form onSubmit={onSubmit} className="space-y-6 pt-4">
+const AddCompanyForm = ({ onSubmit, isSubmitting, errorMessage }) => (
+  <form onSubmit={onSubmit} className="space-y-6 pt-4 bg-[#FFFFFF] rounded-2xl shadow-sm">
+    {/* Header */}
+    <div className="flex justify-between items-center mb-6">
+      <h2 className="text-[#1B365D] font-semibold text-xl">Add New Company</h2>
+    </div>
+
+    {/* Website URL Field */}
     <div className="space-y-2">
-      <Label htmlFor="websiteUrl">Website URL</Label>
+      <Label htmlFor="websiteUrl" className="text-[#1B365D] font-medium text-lg mb-2">
+        Website URL
+      </Label>
       <div className="relative">
-        <Globe className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+        <Globe className="absolute left-2 top-2.5 h-4 w-4 text-[#6B7280]" />
         <Input
           id="websiteUrl"
           name="websiteUrl"
           type="url"
           placeholder="https://example.com"
-          className="pl-8"
+          className="pl-10 pr-4 py-2 bg-[#F8F9FC] border border-[#E5E7EB] rounded-lg focus:ring-2 focus:ring-[#1B365D] focus:border-[#1B365D] placeholder-[#6B7280] text-[#1B365D]"
           required
         />
       </div>
     </div>
-    {/* <div className="space-y-2">
-      <Label htmlFor="linkedinUrl">LinkedIn URL</Label>
-      <div className="relative">
-        <Linkedin className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-        <Input
-          id="linkedinUrl"
-          name="linkedinUrl"
-          type="url"
-          placeholder="https://linkedin.com/company/example"
-          className="pl-8"
-          required
-        />
+
+    {/* Error Message */}
+    {errorMessage && (
+      <div className="bg-[#FEF2F2] text-[#DC2626] rounded-md p-3 text-sm">
+        {errorMessage}
       </div>
-    </div> */}
+    )}
+
+    {/* Submit Button */}
     <Button
       type="submit"
-      className="w-full bg-gradient-to-r from-[#1E3A8A] to-[#00002B] hover:from-[#00002B] hover:to-[#1E3A8A] text-white"
+      className={`w-full py-2 text-white font-medium rounded-lg ${
+        isSubmitting
+          ? 'bg-[#F3F4F6] text-[#9CA3AF] cursor-not-allowed'
+          : 'bg-[#1B365D] hover:bg-[#162A4E]'
+      }`}
       disabled={isSubmitting}
     >
       Add Company
@@ -287,14 +294,11 @@ const Navbar = ({ isCompany }) => {
                         <Plus className="mr-2 h-5 w-5" /> Add Company
                       </Button>
                     </DialogTrigger>
-                    <DialogContent className="sm:max-w-[425px] bg-white/95 backdrop-blur-md">
+                    <DialogContent className="sm:max-w-[425px] backdrop-blur-md bg-[#FFFFFF] border border-[#F0F0F0] rounded-2xl shadow-sm p-6">
                       {isSubmitting ? (
                         <LoadingComponent progress={progress} messageIndex={messageIndex} loadingMessages={loadingMessages} />
                       ) : (
                         <>
-                          <DialogHeader>
-                            <DialogTitle>Add New Company</DialogTitle>
-                          </DialogHeader>
                           <AddCompanyForm onSubmit={handleSubmit} isSubmitting={isSubmitting} />
                         </>
                       )}
@@ -305,7 +309,7 @@ const Navbar = ({ isCompany }) => {
                 {!isCompany && (
                   <Button
                     variant="ghost"
-                    className="text-[#FFFFFF] hover:text-[#06B6D4] transition-colors duration-300"
+                    className="text-[#FFFFFF] transition-colors duration-300"
                     onClick={handleLogout}
                   >
                     <LogOut className="w-5 h-5 mr-2" />

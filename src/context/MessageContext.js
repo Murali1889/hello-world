@@ -69,10 +69,28 @@ export const MessageProvider = ({ children }) => {
                     variant="filled"
                     sx={{
                         width: '100%',
+                        backgroundColor: severity === 'success' ? '#F0FDF4' :
+                                         severity === 'error' ? '#FEF2F2' :
+                                         severity === 'warning' ? '#FFFBEB' :
+                                         '#F8F9FC', // Info background
+                        color: severity === 'success' ? '#166534' :
+                               severity === 'error' ? '#991B1B' :
+                               severity === 'warning' ? '#92400E' :
+                               '#1B365D', // Info text color
+                        border: `1px solid ${severity === 'success' ? '#BBF7D0' :
+                                                severity === 'error' ? '#FECACA' :
+                                                severity === 'warning' ? '#FEF3C7' :
+                                                '#E5E7EB'}`, // Info border
+                        '& .MuiAlert-icon': {
+                            color: severity === 'success' ? '#16A34A' :
+                                   severity === 'error' ? '#DC2626' :
+                                   severity === 'warning' ? '#D97706' :
+                                   '#FF8C69', // Info icon color
+                        },
                         '& .MuiAlert-action': {
                             alignItems: 'center',
-                            padding: '0 8px'
-                        }
+                            padding: '0 8px',
+                        },
                     }}
                     action={
                         action && (

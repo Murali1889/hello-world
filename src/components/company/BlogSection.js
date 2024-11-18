@@ -4,21 +4,27 @@ import {
   ChevronRight,
   ChevronLeft,
   Newspaper,
-  Briefcase,
   ChevronDown,
   Clock,
-  AlertCircle
+  AlertCircle,
+  MapPin, 
+  Calendar ,
+  Briefcase, 
+  ChevronUp, 
 } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
+
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "../ui/card";
 import { Button } from "../ui/button";
 import { Badge } from "../ui/badge";
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
+  
 } from "../ui/collapsible";
-import { format } from "date-fns";
-
+import JobCard from "./JobCard";
+import { format, formatDistanceToNow } from "date-fns";
+import JobsSection from "./JobSection";
 const ITEMS_PER_PAGE = 5;
 
 const EmptyState = ({ type }) => {
@@ -113,6 +119,7 @@ const BlogItem = ({ blog }) => {
       .filter((point) => point.length > 0);
   };
 
+
   return (
     <div className="bg-white rounded-xl border border-[#F0F0F0] shadow-[0px_2px_4px_rgba(0,0,0,0.05)] overflow-hidden transition-all duration-300 hover:shadow-lg">
       <Collapsible>
@@ -171,7 +178,19 @@ const BlogItem = ({ blog }) => {
 const BlogSection = ({ company }) => {
   const [blogPage, setBlogPage] = useState(1);
   const [linkedinPage, setLinkedinPage] = useState(1);
-  const { blogs = [], linkedin_posts = [], linkedin_job_analytics = [] } = company;
+  const { blogs = [], linkedin_posts = [], linkedin_jobs = [] } = company;
+
+  const getRelativeTime = (dateString) => {
+    try {
+      const date = new Date(dateString);
+      return formatDistanceToNow(date, { addSuffix: true });
+    } catch (error) {
+      return dateString; // Fallback to original string if date is invalid
+    }
+  };
+  const [jobsPage, setJobsPage] = useState(1);
+
+  console.log(linkedin_posts)
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -206,65 +225,43 @@ const BlogSection = ({ company }) => {
         </CardContent>
       </Card>
 
-      {/* LinkedIn Posts */}
-      <Card className="bg-white rounded-xl border border-[#F0F0F0] shadow-[0px_2px_4px_rgba(0,0,0,0.05)]">
-  <CardHeader className="p-4 bg-[#F8F9FC] border-b border-[#F0F0F0]">
-    <CardTitle className="text-[#1B365D] font-semibold text-base flex items-center">
-      <ExternalLink className="w-5 h-5 mr-2" />
-      LinkedIn Feed
-    </CardTitle>
-  </CardHeader>
-  <CardContent className="p-6">
-    {linkedin_posts.length > 0 ? (
-      <PaginatedContent
-        data={linkedin_posts}
-        currentPage={linkedinPage}
-        setCurrentPage={setLinkedinPage}
-        renderItem={(post, index) => (
-          <div key={index} className="bg-[#F8F9FC] p-4 rounded-lg hover:bg-[#E5E7EB] transition-colors">
-            <a
-              href={post.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-[#1B365D] text-sm font-medium hover:text-[#FF8C69] line-clamp-2"
-            >
-              {post.content}
-            </a>
-            <p className="text-gray-600 text-xs mt-2">{post.date}</p>
-          </div>
-        )}
-      />
-    ) : (
-      <EmptyState type="linkedin" />
-    )}
-  </CardContent>
-</Card>
-
-      {/* Hiring Analytics */}
       <Card className="bg-white rounded-xl border border-[#F0F0F0] shadow-[0px_2px_4px_rgba(0,0,0,0.05)]">
         <CardHeader className="p-4 bg-[#F8F9FC] border-b border-[#F0F0F0]">
           <CardTitle className="text-[#1B365D] font-semibold text-base flex items-center">
-            <Briefcase className="w-5 h-5 mr-2" />
-            Hiring Analytics
+            <ExternalLink className="w-5 h-5 mr-2" />
+            LinkedIn Feed
           </CardTitle>
         </CardHeader>
         <CardContent className="p-6">
-          {linkedin_job_analytics.length > 0 ? (
-            <ul className="space-y-4">
-              {linkedin_job_analytics.map((analytic, index) => (
-                <li key={index} className="flex items-start gap-2">
-                  <Badge className="bg-[#F8F9FC] text-[#1B365D] px-3 py-1 rounded-full text-xs font-medium">
-                    #{index + 1}
-                  </Badge>
-                  <span className="text-sm text-[#4A4A4A]">{analytic}</span>
-                </li>
-              ))}
-            </ul>
+          {linkedin_posts.length > 0 ? (
+            <PaginatedContent
+              data={linkedin_posts}
+              currentPage={linkedinPage}
+              setCurrentPage={setLinkedinPage}
+              renderItem={(post, index) => (
+                <div key={index} className="bg-[#F8F9FC] p-4 rounded-lg hover:bg-[#E5E7EB] transition-colors">
+                  <a
+                    href={post.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-[#1B365D] text-sm font-medium hover:text-[#FF8C69] line-clamp-2"
+                  >
+                    {post.content}
+                  </a>
+                  <p className="text-gray-600 text-xs mt-2">
+                    {getRelativeTime(post.date) || post.date}
+                  </p>
+                </div>
+              )}
+            />
           ) : (
-            <EmptyState type="hiring" />
+            <EmptyState type="linkedin" />
           )}
         </CardContent>
       </Card>
+
+     <JobsSection linkedin_jobs={linkedin_jobs}/>
+
     </div>
   );
 };

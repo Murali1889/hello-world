@@ -1,7 +1,7 @@
 import { useState, useRef } from "react";
 import { Card, CardHeader, CardContent, CardTitle } from "../ui/card";
 import { Button } from "../ui/button";
-import { Briefcase, ChevronLeft, ChevronRight } from "lucide-react";
+import { Briefcase, ChevronLeft, ChevronRight, Newspaper, ExternalLink, Clock } from "lucide-react";
 import JobCard from "./JobCard";
 
 const JobsSection = ({ linkedin_jobs = [] }) => {
@@ -22,6 +22,51 @@ const JobsSection = ({ linkedin_jobs = [] }) => {
       behavior: 'smooth'
     });
     setCurrentIndex(newIndex);
+  };
+  const EmptyState = ({ type }) => {
+    const states = {
+      blogs: {
+        icon: <Newspaper className="w-6 h-6 text-[#1B365D]" />,
+        title: "Blog posts coming soon",
+        message: "We're gathering the latest articles"
+      },
+      linkedin: {
+        icon: <ExternalLink className="w-6 h-6 text-[#1B365D]" />,
+        title: "LinkedIn feed updating",
+        message: "Recent posts are being fetched"
+      },
+      hiring: {
+        icon: <Briefcase className="w-6 h-6 text-[#1B365D]" />,
+        title: "Hiring analytics loading",
+        message: "Job market insights are being analyzed"
+      }
+    };
+  
+    const { icon, title, message } = states[type];
+  
+    return (
+      <div className="flex flex-col items-center justify-center p-6 text-center">
+        <div className="relative mb-4">
+          <div className="absolute inset-0 bg-[#1B365D]/5 rounded-full animate-ping" />
+          <div className="bg-[#F8F9FC] p-3 rounded-full relative">
+            {icon}
+          </div>
+        </div>
+  
+        <h3 className="text-[#1B365D] font-semibold mb-2">{title}</h3>
+        <p className="text-[#6B7280] text-sm mb-4">{message}</p>
+  
+        <div className="flex items-center gap-2 bg-[#F8F9FC] px-4 py-2 rounded-full">
+          <Clock className="w-4 h-4 text-[#1B365D]" />
+          <span className="text-sm text-[#1B365D]">Updating in 4h</span>
+        </div>
+  
+        <div className="mt-3 flex items-center gap-2">
+          <div className="w-2 h-2 bg-[#FF8C69] rounded-full animate-pulse" />
+          <span className="text-xs text-[#FF8C69]">Processing</span>
+        </div>
+      </div>
+    );
   };
 
   return (

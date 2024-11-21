@@ -122,7 +122,7 @@ const ProductCard = ({ product }) => (
   <div className="group bg-white rounded-2xl border border-[#F0F0F0] shadow-[0px_2px_4px_rgba(0,0,0,0.05)] overflow-hidden transition-all duration-300 hover:shadow-lg">
     <div className="bg-[#F8F9FC] p-4 rounded-t-2xl">
       <h3 className="text-[#1B365D] font-semibold text-base leading-relaxed">
-        {product.name}
+        {product.title || product.name}
       </h3>
     </div>
     <div className="p-4 space-y-4">
@@ -156,6 +156,8 @@ const ProductSection = ({ products }) => {
   if (!products || products.length === 0) {
     return <ProductEmptyState />;
   }
+
+  console.log(products)
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

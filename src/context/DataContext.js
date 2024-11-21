@@ -98,6 +98,7 @@ export const DataProvider = ({ children }) => {
                   const transformedProducts = value.products ? 
                     Object.entries(value.products).map(([productKey, productValue]) => ({
                       name: productKey,
+                      title:productValue?.title,
                       url: productValue.url || '',
                       features: Array.isArray(productValue.features) ? 
                         productValue.features : [],

@@ -7,10 +7,10 @@ import {
   ChevronDown,
   Clock,
   AlertCircle,
-  MapPin, 
-  Calendar ,
-  Briefcase, 
-  ChevronUp, 
+  MapPin,
+  Calendar,
+  Briefcase,
+  ChevronUp,
 } from "lucide-react";
 
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "../ui/card";
@@ -20,7 +20,7 @@ import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
-  
+
 } from "../ui/collapsible";
 import JobCard from "./JobCard";
 import { format, formatDistanceToNow } from "date-fns";
@@ -110,6 +110,7 @@ const PaginatedContent = ({ data, currentPage, setCurrentPage, renderItem }) => 
 
 const BlogItem = ({ blog }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const [showAllPoints, setShowAllPoints] = useState(false);
 
   const getSummaryPoints = (summary) => {
     if (!summary) return [];
@@ -119,6 +120,9 @@ const BlogItem = ({ blog }) => {
       .filter((point) => point.length > 0);
   };
 
+  const points = getSummaryPoints(blog.summary);
+  const displayPoints = showAllPoints ? points : points.slice(0, 7);
+  const hasMorePoints = points.length > 7;
 
   return (
     <div className="bg-white rounded-xl border border-[#F0F0F0] shadow-[0px_2px_4px_rgba(0,0,0,0.05)] overflow-hidden transition-all duration-300 hover:shadow-lg">
@@ -145,9 +149,8 @@ const BlogItem = ({ blog }) => {
               className="p-2 hover:bg-[#F8F9FC] rounded-full transition-colors"
             >
               <ChevronDown
-                className={`w-5 h-5 text-gray-600 transition-transform duration-300 ${
-                  isOpen ? "rotate-180" : ""
-                }`}
+                className={`w-5 h-5 text-gray-600 transition-transform duration-300 ${isOpen ? "rotate-180" : ""
+                  }`}
               />
             </CollapsibleTrigger>
           </div>
@@ -155,14 +158,24 @@ const BlogItem = ({ blog }) => {
         <CollapsibleContent>
           <div className="bg-[#F8F9FC] p-6">
             {blog.summary ? (
-              <ul className="space-y-4">
-                {getSummaryPoints(blog.summary).map((point, index) => (
-                  <li key={index} className="flex items-start gap-2">
-                    <span className="w-2 h-2 bg-[#1B365D] rounded-full flex-shrink-0 mt-1"></span>
-                    <span className="text-sm text-[#4A4A4A]">{point}</span>
-                  </li>
-                ))}
-              </ul>
+              <div>
+                <ul className="space-y-4">
+                  {displayPoints.map((point, index) => (
+                    <li key={index} className="flex items-start gap-2">
+                      <span className="w-2 h-2 bg-[#1B365D] rounded-full flex-shrink-0 mt-1"></span>
+                      <span className="text-sm text-[#4A4A4A]">{point}</span>
+                    </li>
+                  ))}
+                </ul>
+                {hasMorePoints && (
+                  <button
+                    onClick={() => setShowAllPoints(!showAllPoints)}
+                    className="mt-4 text-[#1B365D] text-sm font-medium hover:underline"
+                  >
+                    {showAllPoints ? 'Show Less' : 'See More'}
+                  </button>
+                )}
+              </div>
             ) : (
               <p className="text-sm text-gray-500 italic">
                 Summary is being processed...
@@ -178,8 +191,31 @@ const BlogItem = ({ blog }) => {
 const BlogSection = ({ company }) => {
   const [blogPage, setBlogPage] = useState(1);
   const [linkedinPage, setLinkedinPage] = useState(1);
-  const { blogs = [], linkedin_posts = [], linkedin_jobs = [] } = company;
+  const { blogs: unsortedBlogs = [], linkedin_posts: unsortedPosts = [], linkedin_jobs: unsortedJobs = [] } = company;
 
+  // Handle blogs sorting
+  const blogs = typeof unsortedBlogs === 'string' 
+    ? unsortedBlogs 
+    : [...unsortedBlogs].sort((a, b) => {
+        const dateA = new Date(a.date);
+        const dateB = new Date(b.date);
+        return dateB - dateA; // Sort in descending order (latest first)
+      });
+  
+  const linkedin_posts = typeof unsortedPosts === 'string'
+    ? unsortedPosts
+    : [...unsortedPosts].sort((a, b) => {
+        const dateA = new Date(a.date);
+        const dateB = new Date(b.date);
+        return dateB - dateA;
+      });
+      const linkedin_jobs = typeof unsortedJobs === 'string'
+      ? unsortedJobs
+      : [...unsortedJobs].sort((a, b) => {
+          const dateA = new Date(a.date);
+          const dateB = new Date(b.date);
+          return dateB - dateA;
+        });
   const getRelativeTime = (dateString) => {
     try {
       const date = new Date(dateString);
@@ -203,7 +239,7 @@ const BlogSection = ({ company }) => {
                 <Newspaper className="w-5 h-5 mr-2" />
                 Company Blogs
               </CardTitle>
-              {blogs.length > 0 && (
+              {(typeof blogs !== 'string' && blogs.length > 0) && (
                 <span className="bg-[#1B365D] text-white text-xs px-3 py-1 rounded-full font-medium">
                   {blogs.length} post{blogs.length !== 1 ? "s" : ""}
                 </span>
@@ -212,7 +248,29 @@ const BlogSection = ({ company }) => {
           </div>
         </CardHeader>
         <CardContent className="p-6">
-          {blogs.length > 0 ? (
+          {typeof blogs === 'string' ? (
+            <div className="flex flex-col items-center justify-center p-6 text-center">
+              <div className="relative mb-4">
+                <div className="absolute inset-0 bg-[#1B365D]/5 rounded-full animate-ping" />
+                <div className="bg-[#F8F9FC] p-3 rounded-full relative">
+                  <AlertCircle className="w-6 h-6 text-[#1B365D]" />
+                </div>
+              </div>
+
+              <h3 className="text-[#1B365D] font-semibold mb-2">No Blog Articles Yet</h3>
+              <p className="text-[#6B7280] text-sm mb-4">The company hasn't published any blog posts or articles at this time</p>
+
+              <div className="flex items-center gap-2 bg-[#F8F9FC] px-4 py-2 rounded-full">
+                <Clock className="w-4 h-4 text-[#1B365D]" />
+                <span className="text-sm text-[#1B365D]">Stay tuned for industry insights</span>
+              </div>
+
+              <div className="mt-3 flex items-center gap-2">
+                <div className="w-2 h-2 bg-[#FF8C69] rounded-full animate-pulse" />
+                <span className="text-xs text-[#FF8C69]">We'll notify you when new articles are published</span>
+              </div>
+            </div>
+          ) : blogs.length > 0 ? (
             <PaginatedContent
               data={blogs}
               currentPage={blogPage}
@@ -233,7 +291,29 @@ const BlogSection = ({ company }) => {
           </CardTitle>
         </CardHeader>
         <CardContent className="p-6">
-          {linkedin_posts.length > 0 ? (
+          {typeof linkedin_posts === 'string' ? (
+            <div className="flex flex-col items-center justify-center p-6 text-center">
+              <div className="relative mb-4">
+                <div className="absolute inset-0 bg-[#1B365D]/5 rounded-full animate-ping" />
+                <div className="bg-[#F8F9FC] p-3 rounded-full relative">
+                  <AlertCircle className="w-6 h-6 text-[#1B365D]" />
+                </div>
+              </div>
+
+              <h3 className="text-[#1B365D] font-semibold mb-2">No LinkedIn Activity Yet</h3>
+              <p className="text-[#6B7280] text-sm mb-4">The company hasn't shared any recent updates on their LinkedIn profile</p>
+
+              <div className="flex items-center gap-2 bg-[#F8F9FC] px-4 py-2 rounded-full">
+                <Clock className="w-4 h-4 text-[#1B365D]" />
+                <span className="text-sm text-[#1B365D]">Follow along for latest updates</span>
+              </div>
+
+              <div className="mt-3 flex items-center gap-2">
+                <div className="w-2 h-2 bg-[#FF8C69] rounded-full animate-pulse" />
+                <span className="text-xs text-[#FF8C69]">We'll notify you when new content is posted</span>
+              </div>
+            </div>
+          ) : linkedin_posts.length > 0 ? (
             <PaginatedContent
               data={linkedin_posts}
               currentPage={linkedinPage}
@@ -260,7 +340,7 @@ const BlogSection = ({ company }) => {
         </CardContent>
       </Card>
 
-     <JobsSection linkedin_jobs={linkedin_jobs}/>
+      <JobsSection linkedin_jobs={linkedin_jobs} />
 
     </div>
   );

@@ -66,6 +66,7 @@ export default function CompanyDetailsPage() {
       const foundCompany = companies.find(c =>
         c.company_name.toLowerCase() === decodeURIComponent(name).toLowerCase()
       );
+      console.log(foundCompany)
       setCompany(foundCompany);
     }
   }, [companies, name]);

@@ -31,6 +31,9 @@ const JobCard = ({ job }) => {
   
     const formatAnalyticPoints = (text) => {
       // Split the text into numbered points
+
+      if(!text)
+        return;
       const points = text.split(/(?=\d+\.\s)/).filter(Boolean);
       
       // If there are numbered points, take first 5, otherwise return original text
@@ -51,18 +54,18 @@ const JobCard = ({ job }) => {
               <div className="flex items-center gap-2 mb-1">
                 <Briefcase className="w-4 h-4 text-[#1B365D]" />
                 <CardTitle className="text-xl font-bold text-[#1B365D]">
-                  {job.title}
+                  {job?.title}
                 </CardTitle>
               </div>
               <CardDescription className="text-sm text-muted-foreground flex flex-wrap items-center gap-2">
                 <span className="flex items-center gap-1">
                   <MapPin className="w-3 h-3" />
-                  {job.location}
+                  {job?.location}
                 </span>
                 <span className="text-muted-foreground">•</span>
                 <span className="flex items-center gap-1">
                   <Calendar className="w-3 h-3" />
-                  Posted: {getRelativeTime(job.date)}
+                  Posted: {getRelativeTime(job?.date)}
                 </span>
               </CardDescription>
             </div>
@@ -70,7 +73,7 @@ const JobCard = ({ job }) => {
               variant="secondary" 
               className="text-xs h-6 bg-[#F8F9FC] text-[#1B365D]"
             >
-              {job.location.toLowerCase().includes('remote') ? 'Remote' : 'On-site'}
+              {job?.location.toLowerCase().includes('remote') ? 'Remote' : 'On-site'}
             </Badge>
           </div>
         </CardHeader>
@@ -82,9 +85,9 @@ const JobCard = ({ job }) => {
             </h4>
             <div className="relative">
               <p className="text-sm text-[#4A4A4A] whitespace-pre-line">
-                {formatAnalyticPoints(job.analytic_points)}
+                {formatAnalyticPoints(job?.analytic_points)}
               </p>
-              {job.analytic_points.split(/(?=\d+\.\s)/).length > 1 && (
+              {job?.analytic_points.split(/(?=\d+\.\s)/).length > 1 && (
                 <Button
                   variant="ghost"
                   size="sm"
@@ -100,7 +103,7 @@ const JobCard = ({ job }) => {
           <div className={`mt-4 transition-all duration-200 ${isExpanded ? 'block' : 'hidden'}`}>
             <h4 className="font-semibold mb-2 text-[#1B365D]">Key Requirements & Responsibilities</h4>
             <ul className="list-disc pl-5 space-y-2">
-              {job.summary?.map((point, index) => (
+              {job?.summary?.map((point, index) => (
                 <li key={index} className="text-sm text-[#4A4A4A]">
                   {point}
                 </li>

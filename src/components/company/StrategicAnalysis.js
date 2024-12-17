@@ -20,7 +20,7 @@ const StrategicAnalysis = ({ analyticPoints }) => {
               }`}>
                 {analyticPoints}
               </p>
-              {analyticPoints?.split(/(?=\d+\.\s)/).length > 1 && (
+              {analyticPoints && (
                 <Button
                   variant="ghost"
                   size="sm"

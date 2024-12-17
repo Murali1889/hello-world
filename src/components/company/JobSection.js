@@ -129,7 +129,7 @@ const JobsSection = ({ linkedin_jobs = [] }) => {
       </CardHeader>
       <CardContent className="p-0 overflow-hidden">
         {typeof linkedin_jobs === 'string' ? (
-          <div className="flex flex-col items-center justify-center p-6 text-center mt-[20%]">
+          <div className="flex flex-col items-center justify-center p-6 text-center">
             <div className="relative mb-4">
               <div className="absolute inset-0 bg-[#1B365D]/5 rounded-full animate-ping" />
               <div className="bg-[#F8F9FC] p-3 rounded-full relative">

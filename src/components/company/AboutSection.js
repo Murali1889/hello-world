@@ -49,7 +49,55 @@ const EmptyState = ({ type }) => {
   );
 };
 
+const ClientsNotFoundState = ({ message }) => {
+  return (
+    <div className="flex flex-col items-center justify-center p-6 text-center">
+      <div className="relative mb-4">
+        <div className="bg-[#F8F9FC] p-3 rounded-full">
+          <AlertCircle className="w-6 h-6 text-[#1B365D]" />
+        </div>
+      </div>
+
+      <h3 className="text-[#1B365D] font-semibold mb-2">No Clients Found</h3>
+      {/* <p className="text-[#6B7280] text-sm mb-4">{message}</p> */}
+
+      <div className="flex items-center gap-2 bg-[#F8F9FC] px-4 py-2 rounded-full">
+        <Clock className="w-4 h-4 text-[#1B365D]" />
+        <span className="text-sm text-[#1B365D]">Coming Soon</span>
+      </div>
+    </div>
+  );
+};
+
 const AboutSection = ({ company }) => {
+  const renderClientsContent = () => {
+    if (!company.clients) {
+      return <EmptyState type="clients" />;
+    }
+    
+    if (typeof company.clients === 'string') {
+      return <ClientsNotFoundState message={company.clients} />;
+    }
+    
+    if (Array.isArray(company.clients) && company.clients.length > 0) {
+      return (
+        <div className="flex flex-wrap gap-2">
+          {company.clients.map((client, index) => (
+            <Badge
+              key={index}
+              variant="secondary"
+              className="bg-[#F8F9FC] text-[#1B365D] px-4 py-1.5 rounded-full transition-all duration-300 hover:bg-[#F0F4F8]"
+            >
+              {client}
+            </Badge>
+          ))}
+        </div>
+      );
+    }
+    
+    return <EmptyState type="clients" />;
+  };
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
       {/* Left Column (About and Clients) */}
@@ -83,21 +131,7 @@ const AboutSection = ({ company }) => {
           </CardHeader>
           <CardContent className="p-6">
             <ScrollArea className="h-32 w-full overflow-y-auto scrollbar-thin scrollbar-thumb-[#E0E6ED] scrollbar-track-[#F8F9FC] min-h-[250px]">
-              {company.clients && company.clients.length > 0 ? (
-                <div className="flex flex-wrap gap-2">
-                  {company.clients.map((client, index) => (
-                    <Badge
-                      key={index}
-                      variant="secondary"
-                      className="bg-[#F8F9FC] text-[#1B365D] px-4 py-1.5 rounded-full transition-all duration-300 hover:bg-[#F0F4F8]"
-                    >
-                      {client}
-                    </Badge>
-                  ))}
-                </div>
-              ) : (
-                <EmptyState type="clients" />
-              )}
+              {renderClientsContent()}
             </ScrollArea>
           </CardContent>
         </Card>

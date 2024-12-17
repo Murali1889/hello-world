@@ -109,7 +109,7 @@ const Navbar = ({ isCompany }) => {
         setProgress((prevProgress) => {
           if (prevProgress >= 100) {
             clearInterval(progressInterval)
-            return 100
+            return 99
           }
           return prevProgress + 1
         })
@@ -259,7 +259,7 @@ const Navbar = ({ isCompany }) => {
       <div className={`mx-auto ${isCompany?'px-[30px]':'px-[43px]'}`}>
         <div style={{ display: isCompany ? 'flex' : 'block', justifyContent: 'space-between' }}>
           <div className={`flex justify-between items-center w-full ${isCompany ? '' : 'mb-1'}`} >
-            <h1 className="text-2xl font-semibold cursor-pointer" onClick={() => navigate('/')}>Competitive Intell</h1>
+            <h1 className="text-2xl font-semibold cursor-pointer" onClick={() => navigate('/')}>Competitive Intelligence</h1>
             <div className={`flex ${isCompany?'gap-0':'gap-5'}`}>
               <div className="relative w-full sm:w-[500px]" ref={searchRef}>
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[#E0E0E0] h-4 w-4" />

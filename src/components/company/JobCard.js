@@ -16,9 +16,10 @@ import {
   Calendar,
 } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
+import StrategicAnalysis from "./StrategicAnalysis";
 
 const JobCard = ({ job }) => {
-    const [isExpanded, setIsExpanded] = useState(false);
+    const [isExpanded, setIsExpanded] = useState(true);
     const [showFullAnalytics, setShowFullAnalytics] = useState(false);
   
     const getRelativeTime = (dateString) => {
@@ -80,24 +81,7 @@ const JobCard = ({ job }) => {
   
         <CardContent className="flex-grow pt-4 p-6">
           <div className="mb-4">
-            <h4 className="font-semibold mb-2 text-[#1B365D] flex items-center gap-2">
-              Strategic Analysis
-            </h4>
-            <div className="relative">
-              <p className="text-sm text-[#4A4A4A] whitespace-pre-line">
-                {formatAnalyticPoints(job?.analytic_points)}
-              </p>
-              {job?.analytic_points.split(/(?=\d+\.\s)/).length > 1 && (
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setShowFullAnalytics(!showFullAnalytics)}
-                  className="mt-2 text-[#1B365D] hover:text-[#FF8C69] p-0 h-auto"
-                >
-                  {showFullAnalytics ? 'Show Less' : 'Show More'}
-                </Button>
-              )}
-            </div>
+            <StrategicAnalysis analyticPoints={job?.analytic_points}/>
           </div>
   
           <div className={`mt-4 transition-all duration-200 ${isExpanded ? 'block' : 'hidden'}`}>

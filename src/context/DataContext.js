@@ -105,6 +105,8 @@ export const DataProvider = ({ children }) => {
                       use_cases: Array.isArray(productValue.use_cases) ? 
                         productValue.use_cases : []
                     })) : [];
+
+                    console.log(transformedProducts)
         
                   return {
                     company_name: companyKey,
@@ -133,6 +135,7 @@ export const DataProvider = ({ children }) => {
                   const transformedProducts = value.products ? 
                     Object.entries(value.products).map(([productKey, productValue]) => ({
                       name: productKey,
+                      title: productValue?.title,
                       url: productValue.url || '',
                       features: Array.isArray(productValue.features) ? 
                         productValue.features : [],

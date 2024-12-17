@@ -35,7 +35,6 @@ const ProductEmptyState = () => {
           We're gathering and verifying product information to provide you with accurate details
         </p>
         
-        {/* Status Indicators */}
         <div className="flex flex-col items-center gap-3">
           <div className="inline-flex items-center gap-2 bg-[#F8F9FC] px-4 py-2 rounded-full">
             <div className="w-2 h-2 bg-[#FF8C69] rounded-full animate-pulse" />
@@ -53,6 +52,34 @@ const ProductEmptyState = () => {
             </div>
           </div>
         </div>
+      </div>
+    </div>
+  );
+};
+
+const ProductNotFoundState = ({ message }) => {
+  return (
+    <div className="flex flex-col items-center justify-center min-h-[400px] p-8">
+      <div className="mb-8">
+        <div className="relative bg-[#F8F9FC] rounded-full p-6">
+          <AlertCircle className="w-12 h-12 text-[#1B365D]" />
+        </div>
+      </div>
+
+      <div className="text-center mb-6">
+        <h2 className="text-xl font-semibold text-[#1B365D] mb-3">
+          No Products Found
+        </h2>
+        <div className="inline-flex items-center justify-center bg-[#F8F9FC] text-[#1B365D] px-6 py-3 rounded-full">
+          <Clock className="w-4 h-4 mr-2" />
+          <span className="text-base font-medium">Coming Soon</span>
+        </div>
+      </div>
+
+      <div className="max-w-md text-center">
+        <p className="text-[#4A4A4A] text-base">
+          {message}
+        </p>
       </div>
     </div>
   );
@@ -126,12 +153,10 @@ const ProductCard = ({ product }) => (
       </h3>
     </div>
     <div className="p-4 space-y-4">
-      {/* Features Section */}
       {product.features?.length > 0 && (
         <FeaturesList items={product.features} title="Features" />
       )}
 
-      {/* Use Cases Section */}
       {product.use_cases?.length > 0 && (
         <FeaturesList items={product.use_cases} title="Use Cases" />
       )}
@@ -152,12 +177,16 @@ const ProductCard = ({ product }) => (
 );
 
 const ProductSection = ({ products }) => {
+  console.log(products)
+  // If products is a string, show the not found state with the message
+  if (typeof products === 'string') {
+    return <ProductNotFoundState message={products} />;
+  }
+
   // If no products or empty array, show empty state
   if (!products || products.length === 0) {
     return <ProductEmptyState />;
   }
-
-  console.log(products)
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

@@ -138,11 +138,13 @@ const BlogItem = ({ blog }) => {
               >
                 {blog.title || blog.name}
               </a>
-              {blog.date && (
+              {blog.date && (blog.rawDate ? (
                 <div className="text-sm text-gray-500 mt-2">
                   {format(new Date(blog.date), "MMM d, yyyy")}
                 </div>
-              )}
+              ): <div className="text-sm text-gray-500 mt-2">
+              {/* Date not available */}
+            </div>)}
             </div>
             <CollapsibleTrigger
               onClick={() => setIsOpen(!isOpen)}

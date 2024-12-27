@@ -8,10 +8,16 @@ import { Label } from "./ui/label";
 import { useData } from '../context/DataContext';
 import { useFirebase } from '../context/FirebaseContext';
 import { useAuth } from '../context/AuthContext';
-import { signOut } from 'firebase/auth';
+import { signOut, getAuth } from 'firebase/auth';
 import { useMessage } from '../context/MessageContext';
 import LoadingComponent from './LoadingComponent';
-
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "./ui/dropdown-menu";
 import axios from 'axios';
 
 // Array of admin emails
@@ -23,7 +29,7 @@ const ProfileDropdown = () => {
   const dropdownRef = useRef(null);
   const navigate = useNavigate();
   const { user } = useAuth();
-  console.log(user)
+  const auth = getAuth();
   const isAdmin = ADMIN_EMAILS.includes(user?.email);
 
   useEffect(() => {
@@ -50,7 +56,6 @@ const ProfileDropdown = () => {
     setImageError(true);
   };
 
-  // Fallback avatar when image fails or no photoURL
   const FallbackAvatar = () => (
     <div className="h-8 w-8 rounded-full bg-gray-200 flex items-center justify-center text-gray-600 text-sm font-medium">
       {user?.displayName?.charAt(0).toUpperCase() || user?.email?.charAt(0).toUpperCase() || '?'}
@@ -58,76 +63,54 @@ const ProfileDropdown = () => {
   );
 
   return (
-    <div className="relative" ref={dropdownRef}>
-      {user && (
+    <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
+      <DropdownMenuTrigger asChild>
         <Button
           variant="ghost"
           size="sm"
-          className="p-0 m-0 w-fit h-fit rounded-full focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-          onClick={() => setIsOpen(!isOpen)}
+          className="p-0 m-0 w-fit h-fit rounded-full"
         >
           {user.photoURL && !imageError ? (
             <img
               src={user.photoURL}
-              alt={user.displayName || 'User avatar'}
+              alt={user.displayName}
               className="h-8 w-8 rounded-full object-cover"
               onError={handleImageError}
-              referrerPolicy="no-referrer"  // Add this to handle Google profile image issues
+              referrerPolicy="no-referrer"
             />
           ) : (
             <FallbackAvatar />
           )}
         </Button>
-      )}
-
-      {isOpen && (
-        <div className="absolute right-0 mt-2 w-64 bg-white rounded-lg shadow-lg py-2 z-50">
-          <div className="flex items-center gap-3 p-3 text-black border-b border-gray-100">
-            <div className="h-10 w-10 rounded-full overflow-hidden">
-              {user?.photoURL && !imageError ? (
-                <img
-                  src={user.photoURL}
-                  alt={user.displayName || 'User avatar'}
-                  className="h-full w-full object-cover"
-                  onError={handleImageError}
-                  referrerPolicy="no-referrer"
-                />
-              ) : (
-                <div className="h-full w-full bg-gray-200 flex items-center justify-center text-gray-600 text-lg font-medium">
-                  {user?.displayName?.charAt(0).toUpperCase() || user?.email?.charAt(0).toUpperCase() || '?'}
-                </div>
-              )}
-            </div>
-            <div className="flex flex-col space-y-1 leading-none">
-              {user.displayName && (
-                <p className="font-medium text-sm">{user.displayName}</p>
-              )}
-              {user.email && (
-                <p className="text-xs text-gray-500">{user.email}</p>
-              )}
-            </div>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" className="w-56 bg-white">
+        <div className="flex items-center justify-start gap-2 p-2">
+          <div className="flex flex-col space-y-1 leading-none">
+            {user.displayName && (
+              <p className="font-medium text-sm">{user.displayName}</p>
+            )}
+            {user.email && (
+              <p className="text-xs text-muted-foreground">{user.email}</p>
+            )}
           </div>
-
-          {isAdmin && (
-            <button
-              onClick={() => navigate('/admin/update')}
-              className="w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center"
-            >
-              <User className="mr-2 h-4 w-4" />
-              Admin page
-            </button>
-          )}
-
-          <button
-            onClick={handleLogout}
-            className="w-full px-4 py-2 text-sm text-red-600 hover:bg-gray-100 flex items-center"
-          >
-            <LogOut className="mr-2 h-4 w-4" />
-            Log out
-          </button>
         </div>
-      )}
-    </div>
+        {/* <DropdownMenuSeparator />/ */}
+        <hr/>
+        {isAdmin && (
+          <DropdownMenuItem onClick={() => navigate('/admin/update')} className="cursor-pointer">
+            <User className="h-4 w-4 mr-2" />
+            <span>Admin page</span>
+          </DropdownMenuItem>
+        )}
+        <DropdownMenuItem 
+          onClick={handleLogout}
+          className="text-red-600 focus:text-red-600 cursor-pointer"
+        >
+          <LogOut className="h-4 w-4 mr-2" />
+          <span>Log out</span>
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 };
 
@@ -356,7 +339,7 @@ const Navbar = ({ isCompany }) => {
             <h1 className="text-2xl font-semibold cursor-pointer" onClick={() => navigate('/')}>
               Competitive Intelligence
             </h1>
-            <div className={`flex ${isCompany ? 'gap-0' : 'gap-5'}`}>
+            <div className={`flex ${isCompany ? 'gap-5' : 'gap-5'}`}>
               <div className="relative w-full sm:w-[500px]" ref={searchRef}>
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[#E0E0E0] h-4 w-4" />
                 <Input

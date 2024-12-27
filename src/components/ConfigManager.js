@@ -543,7 +543,7 @@ const ConfigManager = () => {
                           <SelectTrigger className="border-gray-300 focus:border-[#1B365D] focus:ring-[#1B365D]">
                             <SelectValue placeholder="Select pagination type" />
                           </SelectTrigger>
-                          <SelectContent>
+                          <SelectContent className="bg-white">
                             <SelectItem value="clicking-button">Clicking Button</SelectItem>
                             <SelectItem value="scrolling">Scrolling</SelectItem>
                           </SelectContent>

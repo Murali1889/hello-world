@@ -7,23 +7,24 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Label } from "./ui/label";
 import { useData } from '../context/DataContext';
 import { useFirebase } from '../context/FirebaseContext';
+import { useAuth } from '../context/AuthContext';
 import { signOut } from 'firebase/auth';
 import { useMessage } from '../context/MessageContext';
 import LoadingComponent from './LoadingComponent';
+
 import axios from 'axios';
 
 // Array of admin emails
-const ADMIN_EMAILS = ['murali.g@hyperverge.co', 'admin@example.com']; // Add your admin emails here
+const ADMIN_EMAILS = ['murali.g@hyperverge.co', 'tushar.bijalwan@hyperverge.co']; // Add your admin emails here
 
 const ProfileDropdown = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [imageError, setImageError] = useState(false);
   const dropdownRef = useRef(null);
   const navigate = useNavigate();
-  const { auth } = useFirebase();
-  
-  const user = auth.currentUser;
-  const isAdmin = ADMIN_EMAILS.includes(user.email);
-  const avatarLetter = user.email.charAt(0).toUpperCase();
+  const { user } = useAuth();
+  console.log(user)
+  const isAdmin = ADMIN_EMAILS.includes(user?.email);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -45,35 +46,67 @@ const ProfileDropdown = () => {
     }
   };
 
+  const handleImageError = () => {
+    setImageError(true);
+  };
+
+  // Fallback avatar when image fails or no photoURL
+  const FallbackAvatar = () => (
+    <div className="h-8 w-8 rounded-full bg-gray-200 flex items-center justify-center text-gray-600 text-sm font-medium">
+      {user?.displayName?.charAt(0).toUpperCase() || user?.email?.charAt(0).toUpperCase() || '?'}
+    </div>
+  );
+
   return (
     <div className="relative" ref={dropdownRef}>
-      <button
-        onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center justify-center w-8 h-8 rounded-full bg-[#1B4332] text-white font-medium focus:outline-none"
-      >
-        {avatarLetter}
-      </button>
+      {user && (
+        <Button
+          variant="ghost"
+          size="sm"
+          className="p-0 m-0 w-fit h-fit rounded-full focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+          onClick={() => setIsOpen(!isOpen)}
+        >
+          {user.photoURL && !imageError ? (
+            <img
+              src={user.photoURL}
+              alt={user.displayName || 'User avatar'}
+              className="h-8 w-8 rounded-full object-cover"
+              onError={handleImageError}
+              referrerPolicy="no-referrer"  // Add this to handle Google profile image issues
+            />
+          ) : (
+            <FallbackAvatar />
+          )}
+        </Button>
+      )}
 
       {isOpen && (
         <div className="absolute right-0 mt-2 w-64 bg-white rounded-lg shadow-lg py-2 z-50">
-          <div className="flex items-center justify-start gap-2 py-2 px-4 text-black">
+          <div className="flex items-center gap-3 p-3 text-black border-b border-gray-100">
+            <div className="h-10 w-10 rounded-full overflow-hidden">
+              {user?.photoURL && !imageError ? (
+                <img
+                  src={user.photoURL}
+                  alt={user.displayName || 'User avatar'}
+                  className="h-full w-full object-cover"
+                  onError={handleImageError}
+                  referrerPolicy="no-referrer"
+                />
+              ) : (
+                <div className="h-full w-full bg-gray-200 flex items-center justify-center text-gray-600 text-lg font-medium">
+                  {user?.displayName?.charAt(0).toUpperCase() || user?.email?.charAt(0).toUpperCase() || '?'}
+                </div>
+              )}
+            </div>
             <div className="flex flex-col space-y-1 leading-none">
               {user.displayName && (
-                <p className="font-normal text-sm">{user.displayName}</p>
+                <p className="font-medium text-sm">{user.displayName}</p>
               )}
-              {/* {user.email && (
-                <p className="text-xs text-muted-foreground">{user.email}</p>
-              )} */}
+              {user.email && (
+                <p className="text-xs text-gray-500">{user.email}</p>
+              )}
             </div>
           </div>
-          <hr/>
-          {/* <button
-            onClick={() => {}} // Toggle theme function
-            className="w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center"
-          >
-            <Moon className="mr-2 h-4 w-4" />
-            Toggle theme
-          </button> */}
 
           {isAdmin && (
             <button
@@ -84,7 +117,7 @@ const ProfileDropdown = () => {
               Admin page
             </button>
           )}
-          
+
           <button
             onClick={handleLogout}
             className="w-full px-4 py-2 text-sm text-red-600 hover:bg-gray-100 flex items-center"
@@ -129,11 +162,10 @@ const AddCompanyForm = ({ onSubmit, isSubmitting, errorMessage }) => (
 
     <Button
       type="submit"
-      className={`w-full py-2 text-white font-medium rounded-lg ${
-        isSubmitting
-          ? 'bg-[#F3F4F6] text-[#9CA3AF] cursor-not-allowed'
-          : 'bg-[#1B365D] hover:bg-[#162A4E]'
-      }`}
+      className={`w-full py-2 text-white font-medium rounded-lg ${isSubmitting
+        ? 'bg-[#F3F4F6] text-[#9CA3AF] cursor-not-allowed'
+        : 'bg-[#1B365D] hover:bg-[#162A4E]'
+        }`}
       disabled={isSubmitting}
     >
       Add Company
@@ -233,23 +265,23 @@ const Navbar = ({ isCompany }) => {
     const data = {
       websiteUrl: formData.get('websiteUrl'),
     };
-  
+
     try {
       const urlDomain = new URL(data.websiteUrl.trim()).hostname.replace('www.', '');
-      
+
       const existingCompany = companies.find(company => {
         const companyDomain = new URL(company.url).hostname.replace('www.', '');
         return companyDomain === urlDomain;
       });
-  
+
       if (existingCompany) {
         showWarning(`This company is already in our database. Company name: ${existingCompany.company_name || 'Unknown'}. Please try another company or check the existing list.`);
         setIsSubmitting(false);
         return;
       }
-  
+
       const idToken = await auth.currentUser.getIdToken();
-  
+
       const response = await axios.post(
         'https://l6ed6gqjaw4gvnh3pxq765zuye0jistj.lambda-url.us-east-1.on.aws/',
         {
@@ -262,11 +294,11 @@ const Navbar = ({ isCompany }) => {
           }
         }
       );
-  
+
       console.log('Response:', response.data);
       setIsDialogOpen(false);
       showSuccess('Company analysis started! We\'ll notify you when it\'s ready.');
-  
+
     } catch (error) {
       console.log(error);
       if (error.code === 'ERR_NETWORK') {

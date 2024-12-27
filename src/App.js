@@ -11,54 +11,64 @@ import { ProtectedRoute, PublicRoute } from './components/ProtectedRoute';
 import HomePage from './pages/Home';
 import CompanyDetails from './pages/CompanyDetails';
 import LoginPage from './pages/Login';
+import ConfigManager from './components/ConfigManager';
 
 const App = () => {
   return (<Router>
     <FirebaseProvider>
-     <MessageProvider>
-     <AuthProvider>
-        <DataProvider>
-          <DashboardProvider>
-            
+      <MessageProvider>
+        <AuthProvider>
+          <DataProvider>
+            <DashboardProvider>
+
               <Routes>
                 {/* Public Routes */}
-                <Route 
-                  path="/login" 
+                <Route
+                  path="/login"
                   element={
                     <PublicRoute>
                       <LoginPage />
                     </PublicRoute>
-                  } 
+                  }
                 />
 
                 {/* Protected Routes */}
-                <Route 
-                  path="/" 
+                <Route
+                  path="/"
                   element={
                     <ProtectedRoute>
                       <HomePage />
                     </ProtectedRoute>
-                  } 
+                  }
                 />
-                <Route 
-                  path="/company/:name" 
+                <Route
+                  path="/company/:name"
                   element={
                     <ProtectedRoute>
                       <CompanyDetails />
                     </ProtectedRoute>
-                  } 
+                  }
+                />
+
+                <Route
+                  path="/admin/update"
+                  element={
+                    <ProtectedRoute>
+                      <ConfigManager />
+                    </ProtectedRoute>
+                  }
                 />
 
                 {/* Catch all route */}
                 <Route path="*" element={<Navigate to="/" />} />
               </Routes>
-            
-          </DashboardProvider>
-        </DataProvider>
-      </AuthProvider>
-     </MessageProvider>
+
+            </DashboardProvider>
+          </DataProvider>
+        </AuthProvider>
+      </MessageProvider>
     </FirebaseProvider>
-    </Router>
+  </Router>
   );
 };
 

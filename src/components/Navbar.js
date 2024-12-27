@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Search, ArrowLeft, LogOut, Plus, Globe, Linkedin } from 'lucide-react';
+import { Search, ArrowLeft, LogOut, Plus, Globe, Moon, User } from 'lucide-react';
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "./ui/dialog";
@@ -12,14 +12,98 @@ import { useMessage } from '../context/MessageContext';
 import LoadingComponent from './LoadingComponent';
 import axios from 'axios';
 
+// Array of admin emails
+const ADMIN_EMAILS = ['murali.g@hyperverge.co', 'admin@example.com']; // Add your admin emails here
+
+const ProfileDropdown = () => {
+  const [isOpen, setIsOpen] = useState(false);
+  const dropdownRef = useRef(null);
+  const navigate = useNavigate();
+  const { auth } = useFirebase();
+  
+  const user = auth.currentUser;
+  const isAdmin = ADMIN_EMAILS.includes(user.email);
+  const avatarLetter = user.email.charAt(0).toUpperCase();
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+      navigate('/login');
+    } catch (error) {
+      console.error('Logout error:', error);
+    }
+  };
+
+  return (
+    <div className="relative" ref={dropdownRef}>
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        className="flex items-center justify-center w-8 h-8 rounded-full bg-[#1B4332] text-white font-medium focus:outline-none"
+      >
+        {avatarLetter}
+      </button>
+
+      {isOpen && (
+        <div className="absolute right-0 mt-2 w-64 bg-white rounded-lg shadow-lg py-2 z-50">
+          <div className="flex items-center justify-start gap-2 py-2 px-4 text-black">
+            <div className="flex flex-col space-y-1 leading-none">
+              {user.displayName && (
+                <p className="font-normal text-sm">{user.displayName}</p>
+              )}
+              {/* {user.email && (
+                <p className="text-xs text-muted-foreground">{user.email}</p>
+              )} */}
+            </div>
+          </div>
+          <hr/>
+          {/* <button
+            onClick={() => {}} // Toggle theme function
+            className="w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center"
+          >
+            <Moon className="mr-2 h-4 w-4" />
+            Toggle theme
+          </button> */}
+
+          {isAdmin && (
+            <button
+              onClick={() => navigate('/admin/update')}
+              className="w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center"
+            >
+              <User className="mr-2 h-4 w-4" />
+              Admin page
+            </button>
+          )}
+          
+          <button
+            onClick={handleLogout}
+            className="w-full px-4 py-2 text-sm text-red-600 hover:bg-gray-100 flex items-center"
+          >
+            <LogOut className="mr-2 h-4 w-4" />
+            Log out
+          </button>
+        </div>
+      )}
+    </div>
+  );
+};
+
 const AddCompanyForm = ({ onSubmit, isSubmitting, errorMessage }) => (
   <form onSubmit={onSubmit} className="space-y-6 pt-4 bg-[#FFFFFF] rounded-2xl">
-    {/* Header */}
     <div className="flex justify-between items-center mb-6">
       <h2 className="text-[#1B365D] font-semibold text-xl">Add New Company</h2>
     </div>
 
-    {/* Website URL Field */}
     <div className="space-y-2">
       <Label htmlFor="websiteUrl" className="text-[#1B365D] font-medium text-lg mb-2">
         Website URL
@@ -37,14 +121,12 @@ const AddCompanyForm = ({ onSubmit, isSubmitting, errorMessage }) => (
       </div>
     </div>
 
-    {/* Error Message */}
     {errorMessage && (
       <div className="bg-[#FEF2F2] text-[#DC2626] rounded-md p-3 text-sm">
         {errorMessage}
       </div>
     )}
 
-    {/* Submit Button */}
     <Button
       type="submit"
       className={`w-full py-2 text-white font-medium rounded-lg ${
@@ -75,12 +157,10 @@ const SearchResults = ({ companies, selectedIndex, onSelect, onMouseEnter }) => 
   </ul>
 );
 
-
 const Navbar = ({ isCompany }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const { companies } = useData();
-  // console.log(companies)
   const { auth } = useFirebase();
   const [searchTerm, setSearchTerm] = useState('');
   const [isListVisible, setIsListVisible] = useState(false);
@@ -126,8 +206,6 @@ const Navbar = ({ isCompany }) => {
     }
   }, [isSubmitting]);
 
-
-  // console.log(progress)
   const currentCompanyName = location.pathname.startsWith('/company/')
     ? decodeURIComponent(location.pathname.split('/company/')[1])
     : null;
@@ -148,9 +226,6 @@ const Navbar = ({ isCompany }) => {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-
-
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
@@ -160,10 +235,8 @@ const Navbar = ({ isCompany }) => {
     };
   
     try {
-      // Extract domain from URL for comparison
       const urlDomain = new URL(data.websiteUrl.trim()).hostname.replace('www.', '');
       
-      // Check if company already exists by comparing domains
       const existingCompany = companies.find(company => {
         const companyDomain = new URL(company.url).hostname.replace('www.', '');
         return companyDomain === urlDomain;
@@ -175,10 +248,8 @@ const Navbar = ({ isCompany }) => {
         return;
       }
   
-      // Get the current user's ID token
       const idToken = await auth.currentUser.getIdToken();
   
-      // Make API call using axios.post
       const response = await axios.post(
         'https://l6ed6gqjaw4gvnh3pxq765zuye0jistj.lambda-url.us-east-1.on.aws/',
         {
@@ -198,7 +269,6 @@ const Navbar = ({ isCompany }) => {
   
     } catch (error) {
       console.log(error);
-      // For network errors, show success message instead
       if (error.code === 'ERR_NETWORK') {
         setIsDialogOpen(false);
         showSuccess('Company added successfully! You can now search and look into it.');
@@ -212,14 +282,6 @@ const Navbar = ({ isCompany }) => {
     } finally {
       setIsSubmitting(false);
       setProgress(0);
-    }
-  };
-  const handleLogout = async () => {
-    try {
-      await signOut(auth);
-      navigate('/login');
-    } catch (error) {
-      console.error('Logout error:', error);
     }
   };
 
@@ -256,11 +318,13 @@ const Navbar = ({ isCompany }) => {
 
   return (
     <nav className="bg-[#1B365D] text-[#FFFFFF] py-4 shadow-md fixed top-0 z-50 right-0 left-0">
-      <div className={`mx-auto ${isCompany?'px-[30px]':'px-[43px]'}`}>
+      <div className={`mx-auto ${isCompany ? 'px-[30px]' : 'px-[43px]'}`}>
         <div style={{ display: isCompany ? 'flex' : 'block', justifyContent: 'space-between' }}>
-          <div className={`flex justify-between items-center w-full ${isCompany ? '' : 'mb-1'}`} >
-            <h1 className="text-2xl font-semibold cursor-pointer" onClick={() => navigate('/')}>Competitive Intelligence</h1>
-            <div className={`flex ${isCompany?'gap-0':'gap-5'}`}>
+          <div className={`flex justify-between items-center w-full ${isCompany ? '' : 'mb-1'}`}>
+            <h1 className="text-2xl font-semibold cursor-pointer" onClick={() => navigate('/')}>
+              Competitive Intelligence
+            </h1>
+            <div className={`flex ${isCompany ? 'gap-0' : 'gap-5'}`}>
               <div className="relative w-full sm:w-[500px]" ref={searchRef}>
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[#E0E0E0] h-4 w-4" />
                 <Input
@@ -312,16 +376,8 @@ const Navbar = ({ isCompany }) => {
                   </Dialog>
                 )}
 
-                {!isCompany && (
-                  <Button
-                    variant="ghost"
-                    className="text-[#FFFFFF] transition-colors duration-300"
-                    onClick={handleLogout}
-                  >
-                    <LogOut className="w-5 h-5 mr-2" />
-                    Logout
-                  </Button>
-                )}
+                {/* Profile Dropdown Component */}
+                <ProfileDropdown />
               </div>
             </div>
           </div>

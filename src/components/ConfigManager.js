@@ -1,46 +1,15 @@
-import React, { useState, useEffect } from 'react';
-import { useFirebase } from '../context/FirebaseContext';
-import { ref, get } from 'firebase/database';
+import { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
 import ProductConfig from './ProductConfig';
 import BlogConfig from './BlogConfig';
 import ClientConfig from './ClientConfig';
+import { useData } from '../context/DataContext';
 
 const ConfigManager = () => {
-  const { database } = useFirebase();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
-  const [companies, setCompanies] = useState([]);
-
-
-  useEffect(() => {
-    const fetchCompanies = async () => {
-      try {
-        const companiesRef = ref(database, 'companies');
-        const snapshot = await get(companiesRef);
-        if (snapshot.exists()) {
-          const companiesData = snapshot.val();
-          // Validate data exists before mapping
-          console.log(companiesData)
-          if (companiesData) {
-            const companiesList = Object.entries(companiesData).map(([key, value]) => ({
-              key,
-              name: value?.name || key
-            }));
-            setCompanies(companiesList);
-          }
-        } else {
-          setCompanies([]); // Set empty array if no data
-        }
-      } catch (error) {
-        console.error('Error fetching companies:', error);
-        setCompanies([]); // Set empty array on error
-      }
-    };
-
-    fetchCompanies();
-  }, [database]);
+  const { companies } = useData();
 
   // Reset messages when switching tabs
   const handleTabChange = () => {

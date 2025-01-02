@@ -13,7 +13,7 @@ import HomePage from './pages/Home';
 import CompanyDetails from './pages/CompanyDetails';
 import LoginPage from './pages/Login';
 import ConfigManager from './components/ConfigManager';
-import PageTransition from './components/PageTransition';
+// import PageTransition from './components/PageTransition';
 
 const MemoizedProviders = React.memo(({ children }) => (
   <FirebaseProvider>
@@ -40,9 +40,9 @@ const AnimatedRoutes = () => {
           path="/login"
           element={
             <PublicRoute>
-              <PageTransition>
+              {/* <PageTransition> */}
                 <LoginPage />
-              </PageTransition>
+              {/* </PageTransition> */}
             </PublicRoute>
           }
         />
@@ -59,9 +59,9 @@ const AnimatedRoutes = () => {
           path="/page/:pageNumber"
           element={
             <ProtectedRoute>
-              <PageTransition>
+              {/* <PageTransition> */}
                 <HomePage />
-              </PageTransition>
+              {/* </PageTransition> */}
             </ProtectedRoute>
           }
         />
@@ -70,9 +70,9 @@ const AnimatedRoutes = () => {
           path="/company/:name"
           element={
             <ProtectedRoute>
-              <PageTransition>
+              {/* <PageTransition> */}
                 <CompanyDetails />
-              </PageTransition>
+              {/* </PageTransition> */}
             </ProtectedRoute>
           }
         />
@@ -81,9 +81,9 @@ const AnimatedRoutes = () => {
           path="/admin/update"
           element={
             <ProtectedRoute>
-              <PageTransition>
+              {/* <PageTransition> */}
                 <ConfigManager />
-              </PageTransition>
+              {/* </PageTransition> */}
             </ProtectedRoute>
           }
         />

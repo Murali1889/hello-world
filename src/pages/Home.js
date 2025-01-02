@@ -1,15 +1,19 @@
-import { useNavigate } from 'react-router-dom';
+// src/pages/Home.js
+import React from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import { Card, CardHeader, CardContent } from "../components/ui/card";
 import { Button } from "../components/ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useData } from '../context/DataContext';
 import Navbar from '../components/Navbar';
 import CompanyCard from './CompanyCard';
-import { useState } from 'react';
+import { useEffect } from 'react';
 
 export default function HomePage() {
   const { companies, loading } = useData();
-  const [currentPage, setCurrentPage] = useState(1);
+  const navigate = useNavigate();
+  const { pageNumber } = useParams();
+  const currentPage = parseInt(pageNumber) || 1;
   const cardsPerPage = 6;
 
   // Calculate pagination values
@@ -18,12 +22,23 @@ export default function HomePage() {
   const indexOfFirstCard = indexOfLastCard - cardsPerPage;
   const currentCompanies = companies.slice(indexOfFirstCard, indexOfLastCard);
 
+  // Validate page number
+  useEffect(() => {
+    if (currentPage < 1) {
+      navigate('/page/1', { replace: true });
+    } else if (companies.length > 0 && currentPage > totalPages) {
+      navigate(`/page/${totalPages}`, { replace: true });
+    }
+  }, [currentPage, totalPages, navigate, companies.length]);
+
   // Handle page changes
-  const handlePageChange = (pageNumber) => {
-    setCurrentPage(pageNumber);
-    // Scroll to top of the cards section
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
+ // In HomePage component, update the handlePageChange function
+const handlePageChange = (pageNumber) => {
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  navigate(`/page/${pageNumber}`, { 
+    state: { fromPagination: true } 
+  });
+};
 
   // Generate page numbers
   const getPageNumbers = () => {
@@ -61,10 +76,8 @@ export default function HomePage() {
   };
 
   return (
-    <div className="min-h-screen p-8 bg-[#F5F5F0] ">
+    <div className="min-h-screen p-8 bg-[#F5F5F0]">
       <Navbar />
-
-
 
       {loading ? (
         <div className="flex flex-wrap m-auto mt-[50px] mx-[-12px]">
@@ -81,18 +94,12 @@ export default function HomePage() {
                     </CardHeader>
                     <CardContent className="p-6">
                       <div className="space-y-6">
-                        <div className="space-y-3">
-                          <div className="h-4 bg-gray-200 rounded w-full" />
-                          <div className="h-4 bg-gray-200 rounded w-5/6" />
-                        </div>
-                        <div className="space-y-3">
-                          <div className="h-4 bg-gray-200 rounded w-full" />
-                          <div className="h-4 bg-gray-200 rounded w-5/6" />
-                        </div>
-                        <div className="space-y-3">
-                          <div className="h-4 bg-gray-200 rounded w-full" />
-                          <div className="h-4 bg-gray-200 rounded w-5/6" />
-                        </div>
+                        {[1, 2, 3].map((i) => (
+                          <div key={i} className="space-y-3">
+                            <div className="h-4 bg-gray-200 rounded w-full" />
+                            <div className="h-4 bg-gray-200 rounded w-5/6" />
+                          </div>
+                        ))}
                       </div>
                     </CardContent>
                   </Card>
@@ -105,12 +112,11 @@ export default function HomePage() {
         <div className="flex flex-wrap m-auto mt-[50px] mx-[-12px]">
           <div className="w-full px-[12px]">
             <div className="flex flex-wrap -mx-3">
-              {currentCompanies
-                .map((company) => (
-                  <div key={company.company_name} className="px-3 w-full min-[720px]:w-1/2 min-[1080px]:w-1/3 min-w-[360px] mb-6">
-                    <CompanyCard company={company} />
-                  </div>
-                ))}
+              {currentCompanies.map((company) => (
+                <div key={company.company_name} className="px-3 w-full min-[720px]:w-1/2 min-[1080px]:w-1/3 min-w-[360px] mb-6">
+                  <CompanyCard company={company} />
+                </div>
+              ))}
               {companies.length === 0 && (
                 <div className="w-full min-h-[200px] flex items-center justify-center text-gray-600">
                   <p className="text-lg font-medium">No companies found</p>
@@ -132,9 +138,27 @@ export default function HomePage() {
             <ChevronLeft className="w-4 h-4 mr-2 text-[#1B365D]" />
             Previous
           </Button>
-          <span className="text-[#64748B]">
-            Page {currentPage} of {totalPages}
-          </span>
+          <div className="flex items-center gap-2">
+            {getPageNumbers().map((number, index) => (
+              <React.Fragment key={index}>
+                {number === '...' ? (
+                  <span className="text-[#64748B]">...</span>
+                ) : (
+                  <Button
+                    variant={currentPage === number ? "secondary" : "outline"}
+                    className={`min-w-[40px] ${
+                      currentPage === number
+                        ? "bg-[#1B365D] text-white"
+                        : "bg-white text-[#1B365D] border-[#64748B]/20 hover:bg-[#F1F5F9]"
+                    } transition-colors duration-300`}
+                    onClick={() => handlePageChange(number)}
+                  >
+                    {number}
+                  </Button>
+                )}
+              </React.Fragment>
+            ))}
+          </div>
           <Button
             variant="outline"
             className="bg-white text-[#1B365D] border-[#64748B]/20 hover:bg-[#F1F5F9] transition-colors duration-300"

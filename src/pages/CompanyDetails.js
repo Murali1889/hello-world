@@ -102,10 +102,10 @@ export default function CompanyDetailsPage() {
   }
 
   return (
-    <div className="min-h-screen p-8 font-sans mt-[50px]">
+    <div className="min-h-screen p-8">
       <Navbar isCompany={true} />
       {/* Company Header */}
-      <div className="flex justify-between items-center mb-6">
+      <div className="flex justify-between items-center mb-6 mt-[50px]">
         <h1 className="text-3xl font-bold text-[#1B365D]">{company.name}</h1>
         <span className="text-sm text-[#6B7280]">Last Updated: <span className='text-[#4A4A4A]'>{formatDate(company.last_updated)}</span></span>
       </div>

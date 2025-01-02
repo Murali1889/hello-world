@@ -1,6 +1,5 @@
-// DataContext.js
-import React, { createContext, useContext, useEffect, useState } from 'react';
-import { ref, onValue, query, get, child } from 'firebase/database';
+import React, { createContext, useContext, useEffect, useState, useCallback } from 'react';
+import { ref, onValue, get, child } from 'firebase/database';
 import { useFirebase } from './FirebaseContext';
 import { useAuth } from './AuthContext';
 import { useNavigate } from 'react-router-dom';
@@ -14,24 +13,15 @@ export const DataProvider = ({ children }) => {
   const [companies, setCompanies] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [initialized, setInitialized] = useState(false);
 
   const COMPANY_ORDER = [
-    'signzy',
-    'idfy',
-    'digitapai',
-    'perfios',
-    'bureau',
-    'jocata',
-    'jukshio',
-    'videocx',
-    'finbox',
-    'Lentra',
-    'm2p-fintech'
+    'signzy', 'idfy', 'digitapai', 'perfios', 'bureau',
+    'jocata', 'jukshio', 'videocx', 'finbox', 'Lentra', 'm2p-fintech'
   ];
 
-  const formatLastModified = (timestamp) => {
+  const formatLastModified = useCallback((timestamp) => {
     if (!timestamp) return 'Unknown';
-
     const date = new Date(timestamp);
     const now = new Date();
     const diff = now - date;
@@ -52,21 +42,48 @@ export const DataProvider = ({ children }) => {
       return `${hours} hour${hours === 1 ? '' : 's'} ago`;
     } else if (minutes > 0) {
       return `${minutes} minute${minutes === 1 ? '' : 's'} ago`;
-    } else {
-      return 'Just now';
     }
-  };
+    return 'Just now';
+  }, []);
+
+  const transformCompanyData = useCallback(async (companyKey, value, companiesRef, isExtra = false) => {
+    try {
+      const companyRef = child(companiesRef, companyKey);
+      const metaSnapshot = await get(companyRef);
+      const updateTime = metaSnapshot.metadata?.lastUpdateTime || null;
+
+      const transformedProducts = value.products ? 
+        Object.entries(value.products).map(([productKey, productValue]) => ({
+          name: productKey,
+          title: productValue?.title,
+          url: productValue.url || '',
+          features: Array.isArray(productValue.features) ? productValue.features : [],
+          use_cases: Array.isArray(productValue.use_cases) ? productValue.use_cases : []
+        })) : [];
+
+      return {
+        company_name: companyKey,
+        ...value,
+        products: transformedProducts,
+        lastUpdated: updateTime,
+        formattedLastUpdated: formatLastModified(updateTime),
+        isExtra
+      };
+    } catch (err) {
+      console.error(`Error processing company ${companyKey}:`, err);
+      return null;
+    }
+  }, [formatLastModified]);
 
   useEffect(() => {
-    let unsubscribe = () => { };
+    let unsubscribe = () => {};
 
-    const fetchData = async () => {
-      // Only fetch data if user is authenticated
-      if (!user || !user.emailVerified) {
-        setCompanies([]);
-        setLoading(false);
-        // If user is not authenticated, redirect to login
+    const setupDataListener = async () => {
+      // Only setup listener if user is authenticated and not already initialized
+      if (!user?.emailVerified || initialized) {
         if (!user) {
+          setCompanies([]);
+          setLoading(false);
           navigate('/login');
         }
         return;
@@ -78,97 +95,37 @@ export const DataProvider = ({ children }) => {
       try {
         const companiesRef = ref(database, 'companies');
 
+        // Set up a single snapshot listener
         unsubscribe = onValue(companiesRef, async (snapshot) => {
           try {
-            if (snapshot.exists()) {
-              const companiesData = snapshot.val();
-
-              // Get metadata for each company
-              const orderedCompaniesPromises = COMPANY_ORDER.map(async (companyKey) => {
-                try {
-                  if (!companiesData[companyKey]) {
-                    return null;
-                  }
-        
-                  const value = companiesData[companyKey];
-                  const companyRef = child(companiesRef, companyKey);
-                  const metaSnapshot = await get(companyRef);
-                  const updateTime = metaSnapshot.metadata?.lastUpdateTime || null;
-        
-                  const transformedProducts = value.products ? 
-                    Object.entries(value.products).map(([productKey, productValue]) => ({
-                      name: productKey,
-                      title:productValue?.title,
-                      url: productValue.url || '',
-                      features: Array.isArray(productValue.features) ? 
-                        productValue.features : [],
-                      use_cases: Array.isArray(productValue.use_cases) ? 
-                        productValue.use_cases : []
-                    })) : [];
-
-                    console.log(transformedProducts)
-        
-                  return {
-                    company_name: companyKey,
-                    ...value,
-                    products: transformedProducts,
-                    lastUpdated: updateTime,
-                    formattedLastUpdated: formatLastModified(updateTime)
-                  };
-                } catch (err) {
-                  console.error(`Error processing company ${companyKey}:`, err);
-                  return null;
-                }
-              });
-        
-              // Find and process extra companies
-              const extraCompanies = Object.keys(companiesData)
-                .filter(key => !COMPANY_ORDER.includes(key));
-        
-              const extraCompaniesPromises = extraCompanies.map(async (companyKey) => {
-                try {
-                  const value = companiesData[companyKey];
-                  const companyRef = child(companiesRef, companyKey);
-                  const metaSnapshot = await get(companyRef);
-                  const updateTime = metaSnapshot.metadata?.lastUpdateTime || null;
-        
-                  const transformedProducts = value.products ? 
-                    Object.entries(value.products).map(([productKey, productValue]) => ({
-                      name: productKey,
-                      title: productValue?.title,
-                      url: productValue.url || '',
-                      features: Array.isArray(productValue.features) ? 
-                        productValue.features : [],
-                      use_cases: Array.isArray(productValue.use_cases) ? 
-                        productValue.use_cases : []
-                    })) : [];
-        
-                  return {
-                    company_name: companyKey,
-                    ...value,
-                    products: transformedProducts,
-                    lastUpdated: updateTime,
-                    formattedLastUpdated: formatLastModified(updateTime),
-                    isExtra: true // Optional: mark as extra company
-                  };
-                } catch (err) {
-                  console.error(`Error processing company ${companyKey}:`, err);
-                  return null;
-                }
-              });
-        
-              // Combine both ordered and extra companies
-              const allCompanies = await Promise.all([
-                ...orderedCompaniesPromises,
-                ...extraCompaniesPromises
-              ]);
-        
-              // Filter out nulls and set state
-              const finalCompanies = allCompanies.filter(Boolean);
-              setCompanies(finalCompanies);
-            } else {
+            if (!snapshot.exists()) {
               setCompanies([]);
+              return;
             }
+
+            const companiesData = snapshot.val();
+            
+            // Process all companies in parallel
+            const orderedCompaniesPromises = COMPANY_ORDER.map(companyKey => 
+              companiesData[companyKey] ? 
+                transformCompanyData(companyKey, companiesData[companyKey], companiesRef) : 
+                null
+            );
+
+            const extraCompanies = Object.keys(companiesData)
+              .filter(key => !COMPANY_ORDER.includes(key))
+              .map(companyKey => 
+                transformCompanyData(companyKey, companiesData[companyKey], companiesRef, true)
+              );
+
+            const allCompanies = await Promise.all([
+              ...orderedCompaniesPromises,
+              ...extraCompanies
+            ]);
+
+            setCompanies(allCompanies.filter(Boolean));
+            setInitialized(true);
+
           } catch (err) {
             console.error('Data transformation error:', err);
             setError('Error processing data. Please try again later.');
@@ -183,11 +140,11 @@ export const DataProvider = ({ children }) => {
           console.error('Firebase error:', error);
           setError(error.message);
           if (error.code === 'PERMISSION_DENIED') {
-            setError('Access denied. Please check your permissions.');
             navigate('/login');
           }
           setLoading(false);
         });
+
       } catch (err) {
         console.error('Setup error:', err);
         setError('Error connecting to the database. Please try again later.');
@@ -195,20 +152,18 @@ export const DataProvider = ({ children }) => {
       }
     };
 
-    fetchData();
+    setupDataListener();
 
-    // Cleanup function
     return () => {
       unsubscribe();
     };
-  }, [database, user, navigate]); // Added user to dependencies
+  }, [database, user?.emailVerified, initialized, navigate, transformCompanyData]);
 
   const value = {
     companies,
     loading,
     error,
     formatLastModified,
-    // Add a method to check if user has access
     hasAccess: Boolean(user?.emailVerified)
   };
 

@@ -2,12 +2,9 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { onAuthStateChanged, signOut } from 'firebase/auth';
 import { useFirebase } from './FirebaseContext';
-import { useNavigate, useLocation } from 'react-router-dom';
 
-// Create the context
 const AuthContext = createContext(null);
 
-// Export the useAuth hook
 export const useAuth = () => {
     const context = useContext(AuthContext);
     if (!context) {
@@ -18,14 +15,12 @@ export const useAuth = () => {
 
 const ALLOWED_DOMAINS = ['hyperverge.co'];
 
-// Export the AuthProvider component
 export const AuthProvider = ({ children }) => {
     const { auth } = useFirebase();
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
     const [authError, setAuthError] = useState(null);
     const [isVerifying, setIsVerifying] = useState(false);
-    const location = useLocation();
 
     const checkDomainAccess = (email) => {
         if (!email) return false;
@@ -37,19 +32,16 @@ export const AuthProvider = ({ children }) => {
         let mounted = true;
         
         const unsubscribe = onAuthStateChanged(auth, async (user) => {
-            // console.log(await user.getIdToken())
             if (!mounted) return;
             
             setIsVerifying(true);
             try {
                 if (user) {
-                    // Check domain access
                     if (!checkDomainAccess(user.email)) {
                         await signOut(auth);
                         setAuthError('Access restricted to Hyperverge employees only.');
                         setUser(null);
                     } else {
-                        // Set user with verification status
                         setUser({
                             ...user,
                             needsVerification: !user.emailVerified
@@ -81,7 +73,7 @@ export const AuthProvider = ({ children }) => {
             mounted = false;
             unsubscribe();
         };
-    }, [auth]);
+    }, [auth]); // Only depend on auth
 
     const value = {
         user,

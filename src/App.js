@@ -1,7 +1,8 @@
 // src/App.js
 import React from 'react';
 import './App.css'
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { AnimatePresence } from 'framer-motion';
 import { FirebaseProvider } from './context/FirebaseContext';
 import { DataProvider } from './context/DataContext';
 import { DashboardProvider } from './context/DashboardContext';
@@ -12,64 +13,96 @@ import HomePage from './pages/Home';
 import CompanyDetails from './pages/CompanyDetails';
 import LoginPage from './pages/Login';
 import ConfigManager from './components/ConfigManager';
+import PageTransition from './components/PageTransition';
 
-const App = () => {
-  return (<Router>
-    <FirebaseProvider>
-      <MessageProvider>
-        <AuthProvider>
-          <DataProvider>
-            <DashboardProvider>
+const MemoizedProviders = React.memo(({ children }) => (
+  <FirebaseProvider>
+    <MessageProvider>
+      <AuthProvider>
+        <DataProvider>
+          <DashboardProvider>
+            {children}
+          </DashboardProvider>
+        </DataProvider>
+      </AuthProvider>
+    </MessageProvider>
+  </FirebaseProvider>
+));
 
-              <Routes>
-                {/* Public Routes */}
-                <Route
-                  path="/login"
-                  element={
-                    <PublicRoute>
-                      <LoginPage />
-                    </PublicRoute>
-                  }
-                />
+const AnimatedRoutes = () => {
+  const location = useLocation();
 
-                {/* Protected Routes */}
-                <Route
-                  path="/"
-                  element={
-                    <ProtectedRoute>
-                      <HomePage />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/company/:name"
-                  element={
-                    <ProtectedRoute>
-                      <CompanyDetails />
-                    </ProtectedRoute>
-                  }
-                />
+  return (
+    <AnimatePresence mode="wait">
+      <Routes location={location} key={location.pathname}>
+        {/* Public Routes */}
+        <Route
+          path="/login"
+          element={
+            <PublicRoute>
+              <PageTransition>
+                <LoginPage />
+              </PageTransition>
+            </PublicRoute>
+          }
+        />
 
-                <Route
-                  path="/admin/update"
-                  element={
-                    <ProtectedRoute>
-                      <ConfigManager />
-                    </ProtectedRoute>
-                  }
-                />
+        {/* Protected Routes */}
+        <Route
+          path="/"
+          element={
+            <Navigate to="/page/1" replace />
+          }
+        />
+        
+        <Route
+          path="/page/:pageNumber"
+          element={
+            <ProtectedRoute>
+              <PageTransition>
+                <HomePage />
+              </PageTransition>
+            </ProtectedRoute>
+          }
+        />
 
-                {/* Catch all route */}
-                <Route path="*" element={<Navigate to="/" />} />
-              </Routes>
+        <Route
+          path="/company/:name"
+          element={
+            <ProtectedRoute>
+              <PageTransition>
+                <CompanyDetails />
+              </PageTransition>
+            </ProtectedRoute>
+          }
+        />
 
-            </DashboardProvider>
-          </DataProvider>
-        </AuthProvider>
-      </MessageProvider>
-    </FirebaseProvider>
-  </Router>
+        <Route
+          path="/admin/update"
+          element={
+            <ProtectedRoute>
+              <PageTransition>
+                <ConfigManager />
+              </PageTransition>
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Catch all route */}
+        <Route path="*" element={<Navigate to="/page/1" />} />
+      </Routes>
+    </AnimatePresence>
   );
 };
 
-export default App; 
+const App = () => {
+  return (
+    <Router>
+      <MemoizedProviders>
+        <AnimatedRoutes />
+      </MemoizedProviders>
+    </Router>
+  );
+};
+
+export default App;

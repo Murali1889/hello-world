@@ -42,11 +42,12 @@ const BlogConfig = ({ isLoading, setIsLoading, error, setError, success, setSucc
   });
 
   const handleCompanySelect = (company) => {
+    console.log(company)
     setError('');
     setSuccess('');
     setBlogConfig(prev => ({
       ...prev,
-      key: company.key,
+      key: company.company_name,
       name: company.name
     }));
   };
@@ -70,6 +71,7 @@ const BlogConfig = ({ isLoading, setIsLoading, error, setError, success, setSucc
   };
 
   const validateBlogConfig = () => {
+    console.log(blogConfig)
     if (!blogConfig.key) throw new Error('Please select a company');
     if (!blogConfig.url) throw new Error('URL is required');
     if (!blogConfig.mainPath) throw new Error('Main path is required');

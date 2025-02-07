@@ -66,10 +66,10 @@ const ClientConfig = ({ isLoading, setIsLoading, error, setError, success, setSu
     setSuccess('');
     setClientConfig(prev => ({
       ...prev,
-      key: company.key,
+      key: company.company_name,
       name: company.name
     }));
-    await fetchClients(company.key);
+    await fetchClients(company.company_name);
   };
 
   const handleAddClient = async (e) => {

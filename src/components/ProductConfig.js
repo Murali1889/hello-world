@@ -27,7 +27,7 @@ const ProductConfig = ({ isLoading, setIsLoading, error, setError, success, setS
     setSuccess('');
     setProductConfig(prev => ({
       ...prev,
-      key: company.key,
+      key: company.company_name,
       name: company.name
     }));
   };

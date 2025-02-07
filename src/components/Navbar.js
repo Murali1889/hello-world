@@ -372,7 +372,7 @@ const Navbar = ({ isCompany }) => {
               </div>
 
               <div className="flex items-center gap-4">
-                {!currentCompany && (
+                {/* {!currentCompany && (
                   <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                     <DialogTrigger asChild>
                       <Button className="bg-[#FF8C69] hover:bg-[#FF8C69] text-white transition-colors duration-300">
@@ -389,7 +389,7 @@ const Navbar = ({ isCompany }) => {
                       )}
                     </DialogContent>
                   </Dialog>
-                )}
+                )} */}
 
                 {/* Profile Dropdown Component */}
                 <ProfileDropdown />
